@@ -1,5 +1,5 @@
 # NusratNama
-*NusratNama* is a passion project and musical archive dedicated to the legendary *Ustad Nusrat Fateh Ali Khan*.  
+**NusratNama** is a passion project and musical archive dedicated to the legendary **Ustad Nusrat Fateh Ali Khan**.  
 This platform curates, organizes, and honors his vast body of work — from soul-stirring Qawwalis to timeless Sufi kalams.
 
 ### Features (Planned & Upcoming)
