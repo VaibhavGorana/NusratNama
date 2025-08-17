@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NusratNama — Discover</title>
+  <meta name="description" content="Discover NusratNama: browse mood-based playlists and explore qawwalis by emotion." />
+  <style>
+    /* ===== RESET ===== */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family: Georgia, "Times New Roman", serif;
+      background:#080706;
+      color:#efeae1;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.45;
+    }
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+
+    /* ===== THEME VARS ===== */
+    :root{
+      --gold:#d4af37;
+      --maroon:#58151c;
+      --muted:#bfb7ac;
+      --card:#151414;
+      --glass: rgba(0,0,0,0.55);
+      --maxWidth:1100px;
+      --accent-glow: 0 12px 40px rgba(212,175,55,0.08);
+    }
+
+    /* ===== HEADER (consistent) ===== */
+    header{
+      position:fixed; top:0; left:0; right:0; z-index:1200;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 36px; background: linear-gradient(rgba(0,0,0,0.20), rgba(0,0,0,0.08));
+      backdrop-filter: blur(6px); border-bottom:1px solid rgba(212,175,55,0.06);
+      transition: background .22s, padding .22s;
+    }
+    header.scrolled{ background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.55)); padding:12px 28px; }
+    .logo{ color:var(--gold); font-weight:700; font-size:1.45rem; letter-spacing:1px }
+    nav{ display:flex; gap:18px; align-items:center }
+    nav a{ color:#efeae1; font-weight:600; padding:6px 8px; border-radius:6px; position:relative }
+    nav a::after{ content:''; position:absolute; left:0; bottom:-8px; height:2px; width:0; background:var(--gold); transition:width .24s }
+    nav a:hover{ color:var(--gold) } nav a:hover::after{ width:100% }
+
+    /* ===== PAGE HERO (NO BIG BG IMAGE here) ===== */
+    .discover-hero{
+      padding:92px 20px 30px;
+      display:flex; align-items:center; justify-content:center;
+      text-align:center;
+      background: linear-gradient(180deg, rgba(212,175,55,0.02), rgba(0,0,0,0.02));
+    }
+    .discover-hero .inner{ max-width:var(--maxWidth) }
+    .discover-hero h1{ font-size:2.4rem; color:var(--gold); margin-bottom:8px }
+    .discover-hero p{ color:var(--muted); margin-bottom:14px; font-size:1.05rem }
+
+    /* search bar */
+    .search-row{ display:flex; color: yellow;gap:12px; align-items:center; justify-content:center; margin-top:8px; flex-wrap:wrap }
+    .search-input{
+      background:rgba(39, 85, 236, 0.02); border:1px solid rgb(171, 223, 74);
+      padding:12px 14px; border-radius:10px; color:inherit; width:420px; max-width:92%;
+      outline:none; transition: box-shadow .16s;
+    }
+    .search-input:focus{ box-shadow: var(--accent-glow) }
+
+    /* container */
+    .container{ max-width:var(--maxWidth); margin:0 auto; padding:28px 20px 60px; }
+
+    /* featured mood strip */
+    .featured-mood{
+      background: linear-gradient(90deg, rgba(212,175,55,0.03), rgba(255,255,255,0.01));
+      border:1px solid rgba(212,175,55,0.04);
+      padding:12px 14px; border-radius:10px; display:flex; gap:12px; align-items:center; margin-bottom:18px; justify-content:space-between;
+    }
+    .featured-mood .left{ display:flex; gap:12px; align-items:center }
+    .fm-thumb{ width:84px; height:56px; background:#111; border-radius:6px; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:var(--muted) }
+    .fm-meta{ color:var(--muted) }
+    .fm-meta .mood{ color:var(--gold); font-weight:700; margin-bottom:4px }
+
+    /* moods grid */
+    .moods-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap:18px; margin-top:12px }
+    .mood-card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));
+      border:1px solid rgba(255,255,255,0.03);
+      padding:14px; border-radius:12px; min-height:160px; display:flex; flex-direction:column; justify-content:space-between;
+      transition: transform .18s ease, box-shadow .18s ease;
+      cursor:pointer; overflow:hidden;
+    }
+    .mood-card:hover{ transform:translateY(-8px); box-shadow: var(--accent-glow) }
+    .mood-visual{ height:110px; border-radius:8px; background: linear-gradient(135deg, rgba(212,175,55,0.08), rgba(0,0,0,0.08)); display:flex; align-items:center; justify-content:center; color:var(--muted); font-weight:700 }
+    .mood-title{ color:var(--gold); margin-top:10px; font-weight:700 }
+    .mood-desc{ color:var(--muted); margin-top:8px; font-size:0.95rem }
+
+    .mood-actions{ margin-top:12px; display:flex; gap:10px; align-items:center }
+    .btn-ghost{ border:1px solid rgba(255,255,255,0.04); padding:8px 12px; border-radius:8px; background:transparent; color:var(--muted); cursor:pointer }
+    .btn-primary{ background:linear-gradient(180deg,var(--gold), #caa227); color:#080706; padding:8px 12px; border-radius:8px; font-weight:700; cursor:pointer; box-shadow:var(--accent-glow) }
+
+    /* modal */
+    .modal{
+      position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.75); z-index:1700; padding:20px;
+    }
+    .modal.active{ display:flex }
+    .modal-inner{ width:100%; max-width:720px; background:#0d0c0c; border-radius:12px; padding:18px; border:1px solid rgba(255,255,255,0.03) }
+    .modal-inner h3{ color:var(--gold); margin-bottom:8px }
+    .modal-list{ margin-top:12px; display:flex; flex-direction:column; gap:10px }
+    .song-row{ display:flex; gap:12px; align-items:center; padding:10px; background:rgba(255,255,255,0.01); border-radius:8px; border:1px solid rgba(255,255,255,0.02) }
+    .song-row .title{ font-weight:700 }
+    .song-row .meta{ color:var(--muted); font-size:0.95rem }
+
+    /* footer */
+    footer{ margin-top:36px; padding:26px 20px; text-align:center; color:var(--muted); background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.7)); }
+    footer .socials{ display:flex; gap:12px; justify-content:center; margin-top:12px }
+
+    /* small responsive tweaks */
+    @media (max-width:760px){
+      .discover-hero h1{ font-size:1.7rem }
+    }
+    .discover-hero {
+        margin-top: 80px;
+        background-image: url('tree-736882_1920.jpg');
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        padding: 50px;
+        color: white; /* text visible ho */
+        background-size: 100% 100vh;
+
+
+    }
+  </style>
+</head>
+<body>
+
+  <!-- header (consistent) -->
+  <header id="site-header">
+    <div class="logo">NusratNama</div>
+    <nav aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="legacy.html">Legacy</a>
+      <a href="discover.html" aria-current="page">Discover</a>
+      <a href="join.html">Join</a>
+    </nav>
+  </header>
+
+  <!-- hero -->
+  <section class="discover-hero" aria-labelledby="discover-hero-title">
+    <div class="inner">
+      <h1 id="discover-hero-title">Discover Your Mood</h1>
+      <p>Let Nusrat guide your heart — browse curated playlists by emotion and moment.</p>
+
+      <div class="search-row" role="search" aria-label="Search moods and songs">
+        <input id="search" class="search-input" type="search" placeholder="Search mood, song title or tag (e.g. 'Ishq', 'Ruhani')" aria-label="Search moods and songs" />
+        <button id="clear-search" class="btn-ghost" title="Clear search">Clear</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- main content -->
+  <main class="container" id="main">
+
+    <!-- featured mood strip -->
+    <div class="featured-mood" id="featured-mood" aria-live="polite">
+      <div class="left">
+        <div class="fm-thumb" id="fm-thumb">M</div>
+        <div class="fm-meta">
+          <div class="mood" id="fm-mood">Mood Name</div>
+          <div class="fm-song" id="fm-song">Featured track title (placeholder)</div>
+        </div>
+      </div>
+      <div>
+        <button id="fm-play" class="btn-primary">Play</button>
+      </div>
+    </div>
+
+    <!-- moods grid -->
+    <section aria-labelledby="moods-title">
+      <h2 id="moods-title" class="section-title">Mood Playlists</h2>
+
+      <div class="moods-grid" id="moods-grid" role="list"></div>
+    </section>
+
+    <!-- small note -->
+    <div style="margin-top:18px;color:var(--muted);font-size:0.95rem">Tip: type to filter moods or a song title. Click a mood to open its playlist (placeholder content).</div>
+
+  </main>
+
+  <!-- modal (playlist details) -->
+  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-inner" role="document">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3 id="modal-title">Playlist</h3>
+        <button id="modal-close" class="btn-ghost" aria-label="Close">Close</button>
+      </div>
+      <div id="modal-desc" style="color:var(--muted); margin-top:6px; font-size:0.95rem">Short mood description</div>
+      <div class="modal-list" id="modal-list"></div>
+    </div>
+  </div>
+
+  <!-- footer -->
+  <footer>
+    <div style="max-width:var(--maxWidth); margin:0 auto; padding:8px 12px;">
+      <div style="font-weight:700; color:var(--gold)">NusratNama</div>
+      <div style="color:var(--muted); margin-top:6px">A soulful tribute by Vaibhav Gorana — © 2025 NusratNama</div>
+      <div class="socials" aria-hidden="false" style="margin-top:12px">
+        <a href="https://youtube.com" target="_blank" rel="noreferrer">YouTube</a>
+        <a href="https://instagram.com" target="_blank" rel="noreferrer">Instagram</a>
+        <a href="#" target="_blank" rel="noreferrer">Spotify</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- DATA + SCRIPTS -->
+  <script>
+    /* ===== sample moods data (placeholder, replace with real content later) ===== */
+    const MOODS = [
+      {
+        id: 'ishq',
+        title: 'Love & Romance',
+        desc: 'Tender qawwalis and romantic ghazals — the language of ishq.',
+        thumb: '', // optional img path
+        songs: [
+          { title: 'Afreen Afreen (sample)', yt: '#', note: 'Live performance (placeholder)' },
+          { title: 'Tum Ek Gorakh Dhanda Ho', yt: '#', note: 'Live sample' }
+        ]
+      },
+      {
+        id: 'ruhani',
+        title: 'Devotion & Ruhani',
+        desc: 'Spiritual qawwalis that open the heart to the Divine.',
+        songs: [
+          { title: 'Tajdar-e-Haram', yt: '#', note: 'Devotional classic' },
+          { title: 'Allah Hoo (sample)', yt: '#', note: 'Sufi invocation' }
+        ]
+      },
+      {
+        id: 'mehfil',
+        title: 'Mehfil & Live',
+        desc: 'Long live performances, audience interaction, soulful alaaps.',
+        songs: [
+          { title: 'Live Session (placeholder)', yt: '#', note: 'Extended mehfil performance' },
+          { title: 'Classic Live Clip', yt: '#', note: 'Audience favorite' }
+        ]
+      },
+      {
+        id: 'celebration',
+        title: 'Celebration',
+        desc: 'Festive qawwalis for joyous gatherings.',
+        songs: [
+          { title: 'Celebratory Track', yt: '#', note: 'Energy & clapping' }
+        ]
+      },
+      {
+        id: 'melancholy',
+        title: 'Melancholy & Reflection',
+        desc: 'Slower pieces — introspective and tender.',
+        songs: [
+          { title: 'Slow Ghazal (placeholder)', yt: '#', note: 'Reflective mood' }
+        ]
+      },
+      {
+        id: 'power',
+        title: 'Power & Passion',
+        desc: 'High energy qawwalis, intense vocals and rhythmic drive.',
+        songs: [
+          { title: 'Powerful Rendition', yt: '#', note: 'Strong vocal performance' }
+        ]
+      }
+    ];
+
+    /* ===== utilities ===== */
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+
+    /* ===== render mood cards ===== */
+    const moodsGrid = $('#moods-grid');
+    function renderMoods(list) {
+      moodsGrid.innerHTML = '';
+      list.forEach(m => {
+        const card = document.createElement('div');
+        card.className = 'mood-card';
+        card.setAttribute('role','listitem');
+        card.dataset.id = m.id;
+
+        const visual = document.createElement('div');
+        visual.className = 'mood-visual';
+        visual.textContent = m.title.split(' ')[0]; // simple placeholder visual text
+
+        const title = document.createElement('div');
+        title.className = 'mood-title';
+        title.textContent = m.title;
+
+        const desc = document.createElement('div');
+        desc.className = 'mood-desc';
+        desc.textContent = m.desc;
+
+        const actions = document.createElement('div');
+        actions.className = 'mood-actions';
+        const btnOpen = document.createElement('button');
+        btnOpen.className = 'btn-primary';
+        btnOpen.textContent = 'Open Playlist';
+        btnOpen.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          openPlaylist(m.id);
+        });
+        const btnPreview = document.createElement('button');
+        btnPreview.className = 'btn-ghost';
+        btnPreview.textContent = 'Preview';
+        btnPreview.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          previewPlay(m.id);
+        });
+
+        actions.appendChild(btnOpen);
+        actions.appendChild(btnPreview);
+
+        card.appendChild(visual);
+        card.appendChild(title);
+        card.appendChild(desc);
+        card.appendChild(actions);
+
+        card.addEventListener('click', ()=> openPlaylist(m.id));
+        moodsGrid.appendChild(card);
+      });
+    }
+
+    /* ===== featured mood: random on load ===== */
+    const fmMood = $('#fm-mood');
+    const fmSong = $('#fm-song');
+    const fmThumb = $('#fm-thumb');
+    const fmPlay = $('#fm-play');
+    let featured = null;
+    function pickFeatured(){
+      const i = Math.floor(Math.random() * MOODS.length);
+      featured = MOODS[i];
+      fmMood.textContent = featured.title;
+      fmSong.textContent = featured.songs?.[0]?.title || '—';
+      fmThumb.textContent = featured.title.split(' ')[0].slice(0,2).toUpperCase();
+    }
+    fmPlay.addEventListener('click', ()=>{
+      // For Phase 1: open playlist modal and highlight first song
+      if(featured) openPlaylist(featured.id, 0);
+    });
+
+    /* ===== search filter ===== */
+    const searchInput = $('#search');
+    const clearBtn = $('#clear-search');
+    function filterMoods(q){
+      const term = (q||'').trim().toLowerCase();
+      if(!term) return MOODS;
+      return MOODS.filter(m => {
+        if(m.title.toLowerCase().includes(term)) return true;
+        if(m.desc && m.desc.toLowerCase().includes(term)) return true;
+        // check songs
+        if(m.songs && m.songs.some(s => s.title.toLowerCase().includes(term))) return true;
+        return false;
+      });
+    }
+    searchInput.addEventListener('input', (e)=>{
+      const filtered = filterMoods(e.target.value);
+      renderMoods(filtered);
+    });
+    clearBtn.addEventListener('click', ()=>{
+      searchInput.value = '';
+      renderMoods(MOODS);
+    });
+
+    /* ===== modal open / close / populate ===== */
+    const modal = $('#modal');
+    const modalTitle = $('#modal-title');
+    const modalDesc = $('#modal-desc');
+    const modalList = $('#modal-list');
+    const modalClose = $('#modal-close');
+
+    function openPlaylist(id, highlightIndex = -1){
+      const mood = MOODS.find(m => m.id === id);
+      if(!mood) return;
+      modalTitle.textContent = mood.title;
+      modalDesc.textContent = mood.desc || '';
+      modalList.innerHTML = '';
+      mood.songs.forEach((s, idx) => {
+        const row = document.createElement('div');
+        row.className = 'song-row';
+        const info = document.createElement('div');
+        info.style.flex = '1';
+        const t = document.createElement('div');
+        t.className = 'title';
+        t.textContent = s.title;
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.textContent = s.note || '';
+        info.appendChild(t);
+        info.appendChild(meta);
+
+        const controls = document.createElement('div');
+        controls.style.display = 'flex';
+        controls.style.gap = '8px';
+        const play = document.createElement('button');
+        play.className = 'btn-primary';
+        play.textContent = 'Open';
+        // For Phase 1: "Open" will open YouTube or do nothing if '#'
+        play.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          if(s.yt && s.yt !== '#') window.open(s.yt, '_blank');
+          else alert('YouTube link not set — replace s.yt in data with actual URL when ready.');
+        });
+
+        controls.appendChild(play);
+        row.appendChild(info);
+        row.appendChild(controls);
+
+        if(idx === highlightIndex) row.style.outline = '2px solid rgba(212,175,55,0.18)';
+        modalList.appendChild(row);
+      });
+
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden','false');
+    }
+
+    modalClose.addEventListener('click', ()=> {
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden','true');
+    });
+    modal.addEventListener('click', (ev)=> {
+      if(ev.target === modal) { modal.classList.remove('active'); modal.setAttribute('aria-hidden','true'); }
+    });
+
+    /* ===== preview play (Phase 1 - open first song or alert) ===== */
+    function previewPlay(id){
+      const mood = MOODS.find(m => m.id === id);
+      if(!mood) return;
+      const first = mood.songs && mood.songs[0];
+      if(!first) return alert('No sample set for this mood yet.');
+      if(first.yt && first.yt !== '#') window.open(first.yt, '_blank');
+      else alert('Preview not available — add a sample YouTube link to the mood.songs[0].yt in code.');
+    }
+
+    /* ===== init ===== */
+    document.addEventListener('DOMContentLoaded', ()=>{
+      pickFeatured();
+      renderMoods(MOODS);
+      // header scroll effect
+      const hdr = document.getElementById('site-header');
+      window.addEventListener('scroll', ()=> hdr.classList.toggle('scrolled', window.scrollY > 36));
+    });
+
+    /* small keyboard accessibility: Enter on mood card opens playlist */
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape') {
+        if(modal.classList.contains('active')) { modal.classList.remove('active'); modal.setAttribute('aria-hidden','true'); }
+      }
+    });
+  </script>
+  <script src="playerManager.js"></script>
+
+</body>
+</html>

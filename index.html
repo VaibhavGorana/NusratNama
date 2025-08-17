@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NusratNama — Home</title>
+
+  <!-- Minimal fonts: keep serif for headings -->
+  <style>
+  /* ===== RESET ===== */
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family: Georgia, "Times New Roman", serif;
+    background:#0b0a09;
+    color:#efeae1;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    line-height:1.45;
+  }
+  a{color:inherit}
+
+  /* ===== VARIABLES (colors) ===== */
+  :root{
+    --gold:#d4af37;
+    --maroon:#5b1218;
+    --muted:#bdb6aa;
+    --card:#161616;
+    --glass: rgba(0,0,0,0.55);
+  }
+
+  /* ===== HEADER ===== */
+  header{
+    position:fixed;
+    left:0;right:0;top:0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 36px;
+    z-index:1400;
+    background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.10));
+    border-bottom:2px solid rgba(212,175,55,0.07);
+    backdrop-filter: blur(6px);
+    transition: background .25s, padding .25s;
+  }
+  header.scrolled{ background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.55)); padding:12px 28px;}
+  .logo{
+    font-size:1.6rem;
+    font-weight:700;
+    color:var(--gold);
+    letter-spacing:1px;
+  }
+  nav{display:flex;gap:18px;align-items:center}
+  nav a{
+    color:#efeae1; text-decoration:none; font-weight:600; font-size:0.98rem;
+    padding:6px 8px; border-radius:6px; position:relative;
+  }
+  nav a:hover{ color:var(--gold) }
+  nav a::after{
+    content:''; position:absolute; left:0; bottom:-8px; height:2px; width:0; background:var(--gold); transition:width .28s;
+  }
+  nav a:hover::after{ width:100% }
+
+  /* ===== HERO (with preserved background image) ===== */
+  .hero{
+    position:relative;
+    height:90vh;
+    min-height:560px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding-top:72px; /* header space */
+    overflow:hidden;
+  }
+
+  /* full-screen background layer — uses your image name exactly so it won't break */
+  .hero .hero-bg{
+    position:absolute; inset:0; z-index:0;
+    background-image: url("wp7224370-nusrat-fateh-ali-khan-wallpapers.jpg");
+    background-size:cover; background-position:center center;
+    transform-origin:center center;
+    animation: kenburns 24s ease-in-out infinite alternate;
+    margin-top: 80px;
+  }
+  @keyframes kenburns{
+    from{ transform: scale(1) translateY(0px) }
+    to{ transform: scale(1.06) translateY(-8px) }
+  }
+
+  /* subtle dark overlay for legibility */
+  .hero .hero-overlay{
+    position:absolute; inset:0; z-index:1;
+    background: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.65) 60%);
+  }
+
+  /* particle canvas sits above bg and under content */
+  #particle-canvas{ position:absolute; inset:0; z-index:2; pointer-events:none; opacity:0.25 }
+
+  .hero-content{
+    position:relative; z-index:3; max-width:980px; text-align:center; padding:28px;
+  }
+  .hero h1{ font-size:3.2rem; color:var(--gold); letter-spacing:1px; text-shadow:0 6px 30px rgba(0,0,0,0.6)}
+  .hero p{ color:var(--muted); font-size:1.15rem; margin-top:10px; margin-bottom:18px; font-style:italic; }
+
+  /* hero play button */
+  .hero .play-cta{
+    margin-top:14px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:88px; height:88px; border-radius:50%;
+    background: linear-gradient(180deg,var(--gold), #caa227);
+    box-shadow:0 10px 40px rgba(212,175,55,0.12), 0 0 28px rgba(212,175,55,0.08) inset;
+    cursor:pointer;
+    transition:transform .18s ease;
+    border:3px solid rgba(0,0,0,0.18);
+  }
+  .hero .play-cta:active{ transform:scale(.98) }
+  .hero .play-cta .triangle{
+    width:0; height:0; border-left:20px solid #0b0a09; border-top:12px solid transparent; border-bottom:12px solid transparent;
+    margin-left:6px;
+  }
+  .hero .hero-meta{ margin-top:12px; color:var(--muted); font-size:0.95rem }
+
+  /* small Urdu aesthetic (not main heading) */
+  .urdu{
+    display:block; font-family: "Times New Roman", serif; color:#f0e5d6; opacity:0.95; font-style:normal;
+    font-size:0.95rem; margin-top:6px; letter-spacing:.6px;
+  }
+
+  /* ===== QUOTE STRIP ===== */
+  .quote-strip{
+    margin-top:-6px;
+    z-index:4;
+    position:relative;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.45)),
+      repeating-linear-gradient(45deg, rgba(255,255,255,0.01) 0 2px, rgba(0,0,0,0.02) 2px 4px);
+    border-top:1px solid rgba(212,175,55,0.06);
+    border-bottom:1px solid rgba(212,175,55,0.06);
+    padding:14px 20px; text-align:center; color:var(--muted);
+    font-style:italic;
+  }
+  .quote-strip .ur{ color:var(--gold); font-size:0.9rem; display:block; margin-top:8px; }
+
+  /* ===== MAIN CONTENT (below hero) ===== */
+  main{ position:relative; z-index:5; padding:48px 20px; max-width:1100px; margin:0 auto; }
+
+  .section-title{ font-size:1.6rem; color:var(--gold); margin-bottom:18px; letter-spacing:.6px }
+
+  /* ===== FEATURED SONG CARDS ===== */
+  .song-cards{ display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap:20px; margin-top:18px }
+  .song-card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
+    border:1px solid rgba(255,255,255,0.03);
+    padding:14px; border-radius:12px; overflow:hidden;
+    display:flex; gap:12px; align-items:flex-start;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .song-card:hover{ transform:translateY(-6px); box-shadow: 0 14px 30px rgba(0,0,0,0.7) }
+  .song-thumb{ flex:0 0 92px; height:92px; border-radius:8px; background-size:cover; background-position:center; box-shadow: inset 0 0 20px rgba(0,0,0,0.35) }
+  .song-info{ flex:1 }
+  .song-info h4{ font-size:1.05rem; color:#fff; margin-bottom:6px }
+  .song-info p{ font-size:0.92rem; color:var(--muted); margin-bottom:8px }
+  .song-controls{ display:flex; gap:10px; align-items:center }
+  .btn-play{
+    background:var(--gold); border-radius:10px; padding:8px 12px; cursor:pointer; color:#0b0a09; font-weight:700;
+    border:none; box-shadow: 0 6px 18px rgba(212,175,55,0.12);
+  }
+  .progress{
+    height:8px; background: rgba(255,255,255,0.06); border-radius:999px; width:100%;
+    overflow:hidden; position:relative;
+  }
+  .progress > i{ position:absolute; left:0; top:0; height:100%; width:0; background: linear-gradient(90deg,var(--gold), #f3d96b); border-radius:999px }
+
+  /* ===== DISCOVER (mood cards) ===== */
+  .moods{ display:flex; flex-wrap:wrap; gap:14px; margin-top:18px }
+  .mood-card{
+    background: linear-gradient(180deg, rgba(20,12,10,0.35), rgba(10,8,7,0.55));
+    border:1px solid rgba(212,175,55,0.06);
+    padding:14px 18px; border-radius:10px; min-width:160px; cursor:pointer;
+    transition: transform .18s ease; color:var(--muted)
+  }
+  .mood-card:hover{ transform:translateY(-6px); color:#fff }
+
+  /* ===== LEGACY + CTA ===== */
+  .legacy { display:flex; gap:18px; margin-top:18px; align-items:center; flex-wrap:wrap; }
+  .legacy img{ width:180px; height:140px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.03) }
+  .cta-join{ margin-top:18px; display:inline-block; background:var(--gold); color:#0b0a09; padding:10px 18px; border-radius:8px; font-weight:700; text-decoration:none }
+
+  /* ===== FOOTER ===== */
+  footer{
+    margin-top:48px; padding:26px 20px; text-align:center; color:var(--muted);
+    border-top: 8px solid transparent;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.7)),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.0) 0 10px, rgba(255,255,255,0.01) 10px 20px);
+    position:relative;
+  }
+  /* decorative Sufi border */
+  footer::before{
+    content:"";
+    display:block;
+    height:8px;
+    width:100%;
+    background: linear-gradient(90deg, rgba(0,0,0,0.0), rgba(212,175,55,0.18), rgba(0,0,0,0.0));
+    margin-bottom:12px;
+  }
+  .socials { display:flex; gap:12px; justify-content:center; margin-top:12px }
+  .socials a{ color:var(--muted); text-decoration:none; font-size:0.95rem }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width:880px){
+    .hero h1{ font-size:2.2rem }
+    header{ padding:12px 18px }
+    .logo{ font-size:1.25rem }
+    .hero{ min-height:64vh }
+    .song-card{ flex-direction:row; }
+  }
+  @media (max-width:520px){
+    nav{ gap:10px; font-size:0.95rem }
+    .song-card{ flex-direction:column; align-items:flex-start }
+    .song-thumb{ width:100%; height:160px }
+  }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header id="site-header">
+    <div class="logo">NusratNama</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="allsong.html">All Songs</a>
+      <a href="discover.html">Discover</a>
+      <a href="legacy.html">Legacy</a>
+      <a href="join.html">Contact</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="home" aria-label="Hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <canvas id="particle-canvas" width="1600" height="900" aria-hidden="true"></canvas>
+    <div class="hero-overlay" aria-hidden="true"></div>
+
+    <div class="hero-content" role="region" aria-labelledby="hero-title">
+      <h1 id="hero-title">The Voice of the Divine</h1>
+      <p> A soulful tribute to Ustad Nusrat Fateh Ali Khan <span class="urdu">— ساز کی سرحدیں نہیں</span></p>
+
+      <!-- hero audio element (local signature qawwali sample) -->
+      <audio id="hero-audio" src="songs/gorakh.mp3" preload="none"></audio>
+
+      <div class="play-cta" id="hero-play" aria-label="Play signature qawwali" title="Play signature qawwali">
+        <span class="triangle" aria-hidden="true"></span>
+      </div>
+
+      <div class="hero-meta">Press the golden button to begin — audio sample will play (demo)</div>
+    </div>
+  </section>
+
+  <!-- ROTATING QUOTE STRIP -->
+  <div class="quote-strip" id="quote-strip" role="region" aria-live="polite">
+    “Music knows no boundaries”
+    <span class="ur">"ساز کی کوئی سرحد نہیں ہوتی"</span>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main>
+
+    <!-- FEATURED SONGS -->
+    <section id="featured" class="fade-section">
+      <div class="section-title">Featured Tracks</div>
+      <div class="song-cards">
+
+        <!-- Local audio card 1 -->
+        <article class="song-card" data-audio="songs/gorakh.mp3" >
+          <div class="song-thumb" style="background-image:url('assets/images/gorakh-thumb.jpg');"></div>
+          <div class="song-info">
+            <h4>Tum Ek Gorakh Dhanda Ho</h4>
+            <p>Live qawwali — soulful exploration of divine paradox. (Live: 1992)</p>
+            <div class="song-controls">
+              <button class="btn-play">Play</button>
+              <div style="flex:1">
+                <div class="progress"><i style="width:0%"></i></div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Local audio card 2 -->
+        <article class="song-card" data-audio="songs/halka.mp3">
+          <div class="song-thumb" style="background-image:url('assets/images/halka-thumb.jpg');"></div>
+          <div class="song-info">
+            <h4>Yeh Jo Halka Halka Suroor</h4>
+            <p>A famous piece often sung in mehfils; known for its gentle intoxication of the heart.</p>
+            <div class="song-controls">
+              <button class="btn-play">Play</button>
+              <div style="flex:1">
+                <div class="progress"><i style="width:0%"></i></div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- YouTube embed example (replace VIDEO_ID with actual nusrat id) -->
+        <article class="song-card" data-youtube="VIDEO_ID_HERE" data-sample="songs/gorakh.mp3">
+          <div class="song-thumb" style="background-image:url('assets/images/yt-thumb.jpg');"></div>
+          <div class="song-info">
+            <h4>Tajdar-e-Haram (YouTube)</h4>
+            <p>Official upload (if embeddable) — will play via YouTube embed, or fall back to a local sample.</p>
+            <div class="song-controls">
+              <button class="btn-play">Play</button>
+              <div style="flex:1">
+                <div class="progress"><i style="width:0%"></i></div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- DISCOVER / MOODS -->
+    <section id="discover" class="fade-section" style="margin-top:32px">
+      <div class="section-title">Discover More</div>
+      <div class="moods">
+        <div class="mood-card">Ishq (Love)</div>
+        <div class="mood-card">Ruhani (Devotion)</div>
+        <div class="mood-card">Mehfil (Live)</div>
+        <div class="mood-card">Romantic</div>
+      </div>
+    </section>
+
+    <!-- LEGACY -->
+    <section id="legacy" class="fade-section" style="margin-top:32px">
+      <div class="section-title">Legacy of Nusrat</div>
+      <div class="legacy">
+        <img src="assets/images/nusrat-portrait.jpg" alt="Nusrat portrait">
+        <div>
+          <p style="color:var(--muted)">Ustad Nusrat Fateh Ali Khan's voice transcended musical boundaries. This project is a curated tribute — a starting point for listeners and seekers.</p>
+          <a class="cta-join" href="#contact">Join the Journey</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- STICKY MINI PLAYER (shows currently playing local audio) -->
+  <div id="mini-player" style="position:fixed;left:12px;right:12px;bottom:16px;background:linear-gradient(180deg,rgba(0,0,0,0.6),rgba(0,0,0,0.4));padding:10px 14px;border-radius:10px;display:none;align-items:center;gap:12px;z-index:1500">
+    <div id="mini-title" style="flex:1;color:var(--muted)">Nothing playing</div>
+    <button id="mini-toggle" class="btn-play" style="padding:8px 10px">Play</button>
+    <div style="width:200px"><div class="progress"><i style="width:0%"></i></div></div>
+  </div>
+
+  <!-- Hidden audio element used as the main local player -->
+  <audio id="main-audio" preload="metadata"></audio>
+
+  <!-- Hidden div for YouTube player -->
+  <div id="yt-player" style="position:absolute;left:-9999px;top:-9999px;width:0;height:0" aria-hidden="true"></div>
+
+  <!-- FOOTER -->
+  <footer id="contact">
+    <div style="max-width:960px;margin:0 auto">
+      <div style="font-weight:700;color:var(--gold);margin-bottom:6px">NusratNama</div>
+      <div style="color:var(--muted);font-size:0.95rem">A soulful tribute by Vaibhav Gorana — © 2025 NusratNama</div>
+
+      <div class="socials" aria-hidden="false" style="margin-top:12px">
+        <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">YouTube</a>
+        <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <a href="#" target="_blank" rel="noopener noreferrer">Spotify</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script>
+  /* ---------- Helper: smooth fade-up when section enters viewport ---------- */
+  (function(){
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if(e.isIntersecting) e.target.classList.add('in-view');
+        else e.target.classList.remove('in-view');
+      });
+    }, {threshold: 0.12});
+    document.querySelectorAll('.fade-section').forEach(s => {
+      s.style.opacity = 0;
+      s.style.transform = 'translateY(20px)';
+      s.style.transition = 'opacity .7s ease, transform .7s ease';
+      io.observe(s);
+      s.addEventListener('transitionend', ()=>{/*noop*/});
+      // add class handler
+      const obs = new MutationObserver(()=>{ if(s.classList.contains('in-view')){ s.style.opacity=1; s.style.transform='translateY(0)'}});
+      obs.observe(s,{attributes:true});
+    });
+  })();
+
+  /* ---------- Header shrink on scroll ---------- */
+  (function(){
+    const hdr = document.getElementById('site-header');
+    window.addEventListener('scroll', ()=> {
+      hdr.classList.toggle('scrolled', window.scrollY > 40);
+    });
+  })();
+
+  /* ---------- Particle background (simple) ---------- */
+  (function(){
+    const canvas = document.getElementById('particle-canvas');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let w = canvas.width = canvas.clientWidth || innerWidth;
+    let h = canvas.height = canvas.clientHeight || innerHeight;
+    const particles = [];
+    const P = 28;
+    for(let i=0;i<P;i++){
+      particles.push({
+        x: Math.random()*w,
+        y: Math.random()*h,
+        r: 0.6 + Math.random()*1.6,
+        vx: (Math.random()-0.5)*0.2,
+        vy: (Math.random()-0.5)*0.2,
+        alpha: 0.08 + Math.random()*0.14
+      });
+    }
+    function resize(){ w=canvas.width = canvas.clientWidth || innerWidth; h=canvas.height = canvas.clientHeight || innerHeight; }
+    window.addEventListener('resize', resize);
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      for(const p of particles){
+        p.x += p.vx; p.y += p.vy;
+        if(p.x < -20) p.x = w+20;
+        if(p.x > w+20) p.x = -20;
+        if(p.y < -20) p.y = h+20;
+        if(p.y > h+20) p.y = -20;
+        ctx.beginPath();
+        ctx.fillStyle = 'rgba(255,230,170,'+p.alpha+')';
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+
+  /* ---------- HERO play toggle (local audio) ---------- */
+  (function(){
+    const heroBtn = document.getElementById('hero-play');
+    const heroAudio = document.getElementById('hero-audio');
+    const mini = document.getElementById('mini-player');
+    const miniTitle = document.getElementById('mini-title');
+    const miniToggle = document.getElementById('mini-toggle');
+    const mainAudio = document.getElementById('main-audio');
+
+    function showMini(title){
+      mini.style.display = 'flex';
+      miniTitle.textContent = title || 'Now playing';
+    }
+
+    heroBtn.addEventListener('click', async ()=>{
+      // stop youtube player if active (we'll handle below)
+      if(window.YT && window.ytPlayer && typeof window.ytPlayer.stopVideo === 'function'){ try{ window.ytPlayer.stopVideo() }catch(e){} }
+      // if hero audio is already set to main-audio, reuse
+      if(!heroAudio.src){ alert('Hero sample missing: add songs/gorakh.mp3 in songs/'); return; }
+      // transfer src to main-audio so progress/properties shared
+      mainAudio.src = heroAudio.src;
+      try{
+        await mainAudio.play();
+        showMini('Signature Qawwali — sample');
+        miniToggle.textContent = 'Pause';
+      }catch(err){
+        console.warn('Autoplay blocked, user gesture required');
+      }
+    });
+
+    miniToggle.addEventListener('click', ()=>{
+      if(mainAudio.paused){ mainAudio.play(); miniToggle.textContent='Pause' } else { mainAudio.pause(); miniToggle.textContent='Play' }
+    });
+
+    /* progress update for mini player */
+    const miniProg = mini.querySelector('.progress > i');
+    mainAudio.addEventListener('timeupdate', ()=> {
+      const pct = (mainAudio.currentTime / (mainAudio.duration || 1)) * 100;
+      miniProg.style.width = pct + '%';
+    });
+    mainAudio.addEventListener('ended', ()=> miniToggle.textContent='Play');
+  })();
+
+  /* ---------- FEATURED SONG CARDS logic (local audio and YouTube fallback) ---------- */
+  (function(){
+    const mainAudio = document.getElementById('main-audio');
+    const cards = document.querySelectorAll('.song-card');
+    let activeCard = null;
+
+    // YouTube: load iframe API only when needed
+    let ytReady = false;
+    function loadYT(cb){
+      if(window.YT && window.YT.Player){ ytReady=true; cb && cb(); return; }
+      const s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(s);
+      window.onYouTubeIframeAPIReady = function(){ ytReady = true; cb && cb(); }
+    }
+
+    // create hidden player container
+    const ytContainer = document.getElementById('yt-player');
+
+    // helper: stop any YT
+    function stopYT(){ if(window.ytPlayer && window.ytPlayer.stopVideo) try{ window.ytPlayer.stopVideo() }catch(e){} }
+
+    cards.forEach(card => {
+      const btn = card.querySelector('.btn-play');
+      const progEl = card.querySelector('.progress > i');
+
+      btn.addEventListener('click', async (e) => {
+        const audioSrc = card.dataset.audio;
+        const ytId = card.dataset.youtube;
+        const sample = card.dataset.sample;
+
+        // if currently there is another active card, reset its button & progress if different
+        if(activeCard && activeCard !== card){
+          const prevBtn = activeCard.querySelector('.btn-play');
+          prevBtn.textContent = 'Play';
+        }
+
+        // If card is local audio
+        if(audioSrc){
+          stopYT();
+          if(mainAudio.src !== audioSrc){
+            mainAudio.src = audioSrc;
+          }
+          if(mainAudio.paused){
+            try{ await mainAudio.play(); btn.textContent = 'Pause'; activate(card); }catch(e){ console.warn('play blocked') }
+          } else {
+            mainAudio.pause(); btn.textContent = 'Play'; deactivate(card);
+          }
+          // update progress bar
+          const update = ()=> {
+            const pct = (mainAudio.currentTime / (mainAudio.duration || 1)) * 100;
+            progEl.style.width = pct + '%';
+            if(mainAudio.paused) return;
+            requestAnimationFrame(update);
+          }
+          requestAnimationFrame(update);
+        }
+        // If card wants YouTube
+        else if(ytId){
+          // clear mainAudio
+          try{ mainAudio.pause(); }catch(e){}
+          loadYT(() => {
+            // if new YT player or existing with different id, load it
+            if(!window.ytPlayer){
+              window.ytPlayer = new YT.Player('yt-player', {
+                height: '0', width: '0',
+                videoId: ytId,
+                playerVars: { controls:0, modestbranding:1, rel:0, fs:0 },
+                events: {
+                  onReady: (ev)=>{
+                    try{ ev.target.playVideo(); btn.textContent='Pause'; activate(card); }
+                    catch(e){ console.warn(e) }
+                  },
+                  onStateChange: (ev)=>{
+                    if(ev.data === YT.PlayerState.ENDED){ btn.textContent='Play'; deactivate(card); }
+                  },
+                  onError: (ev)=>{
+                    console.warn('YT error', ev.data);
+                    // attempt fallback: if data-sample present, play that
+                    if(sample){
+                      mainAudio.src = sample;
+                      mainAudio.play().then(()=>{ btn.textContent='Pause'; activate(card); })
+                    } else {
+                      alert('This video cannot be embedded — opening on YouTube.');
+                      window.open('https://www.youtube.com/watch?v=' + ytId, '_blank');
+                    }
+                  }
+                }
+              });
+            } else {
+              // existing player: load by id then play
+              try{
+                window.ytPlayer.loadVideoById(ytId);
+                btn.textContent='Pause'; activate(card);
+              }catch(e){
+                console.warn(e);
+              }
+            }
+          });
+        }
+      });
+    });
+
+    function activate(card){ activeCard = card; const b = card.querySelector('.btn-play'); b.textContent='Pause' }
+    function deactivate(card){ if(activeCard===card) activeCard=null; const b = card.querySelector('.btn-play'); b.textContent='Play' }
+
+    // pause main-audio when user clicks elsewhere or navigates
+    document.addEventListener('visibilitychange', ()=>{ if(document.hidden) try{ mainAudio.pause(); }catch(e){} });
+    // ensure mainAudio updates card progress
+    mainAudio.addEventListener('timeupdate', ()=>{
+      const playingCard = [...cards].find(c=> c.dataset.audio === mainAudio.src);
+      if(playingCard){
+        const el = playingCard.querySelector('.progress > i');
+        el.style.width = (mainAudio.currentTime / (mainAudio.duration || 1) * 100) + '%';
+      }
+      // update mini-player if open
+      const mini = document.getElementById('mini-player');
+      if(mini.style.display !== 'none'){
+        const miniProg = mini.querySelector('.progress > i');
+        miniProg.style.width = (mainAudio.currentTime / (mainAudio.duration || 1) * 100) + '%';
+      }
+    });
+  })();
+
+  /* ---------- Rotating quotes ---------- */
+  (function(){
+    const quotes = [
+      {en:"Music knows no boundaries", ur:"ساز کی کوئی سرحد نہیں ہوتی"},
+      {en:"The voice of the soul", ur:"روح کی آواز"},
+      {en:"A legend beyond time", ur:"وقت سے پرے ایک عظیم شخصیت"}
+    ];
+    const el = document.getElementById('quote-strip');
+    let i = 0;
+    setInterval(()=> {
+      i = (i+1) % quotes.length;
+      el.innerHTML = `"${quotes[i].en}" <span class="ur">"${quotes[i].ur}"</span>`;
+    }, 4200);
+  })();
+
+  </script>
+  <script src="playerManager.js"></script>
+
+</body>
+</html>

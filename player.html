@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>NusratNama — Player Test</title>
+<style>
+  :root{
+    --bg1:#0d0c0c; --bg2:#151515; --gold:#d4af37; --muted:#bfb7ac; --card:#111;
+    --gold-2:#b9982c; --shadow:rgba(0,0,0,.6);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; min-height:100vh; font-family: Georgia, "Times New Roman", serif;
+    background: radial-gradient(800px 500px at 10% 0%, rgba(212,175,55,0.04), transparent),
+                linear-gradient(180deg,var(--bg1),var(--bg2));
+    color:#efeae1; -webkit-font-smoothing:antialiased;
+  }
+
+  header{
+    position:sticky; top:0; z-index:100; display:flex; justify-content:space-between;
+    align-items:center; padding:14px 22px; backdrop-filter: blur(6px);
+    background:linear-gradient(180deg, rgba(0,0,0,.6), rgba(0,0,0,.3));
+    border-bottom:1px solid rgba(212,175,55,.06);
+  }
+  .logo{ color:var(--gold); font-weight:700; font-size:1.15rem; }
+
+  main{ max-width:1100px; margin:28px auto; padding:12px; }
+
+  /* Rectangular player box (center) */
+  .player-card{
+    border-radius:14px; overflow:hidden; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
+    border:1px solid rgba(212,175,55,0.06); box-shadow:0 20px 60px var(--shadow); transition:transform .18s ease;
+  }
+  .player-card:hover{ transform:translateY(-6px) }
+
+  .player-top{ background:#000; position:relative; }
+  .player-rect{ width:100%; aspect-ratio:16/9; display:block; background:#000; }
+
+  /* controls */
+  .controls{ display:flex; align-items:center; gap:10px; padding:12px 14px; background:#0f0f0f; border-top:1px solid rgba(212,175,55,.04); }
+  .left{ display:flex; gap:8px; align-items:center; }
+  .btn{ border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700; background:var(--gold); color:#080706; }
+  .btn.ghost{ background:transparent; color:#efeae1; border:1px solid rgba(255,255,255,0.04) }
+  .time{ color:var(--muted); font-weight:700; min-width:110px; text-align:center }
+
+  .meta{ padding:14px; display:flex; flex-direction:column; gap:8px; }
+  .title{ color:var(--gold); font-weight:800; font-size:1.25rem}
+  .artist{ color:var(--muted) }
+
+  /* mini-player */
+  .mini{
+    position:fixed; right:18px; bottom:18px; width:320px; border-radius:12px; overflow:hidden;
+    background:#0f0f0f; border:1px solid rgba(212,175,55,.06); box-shadow:0 18px 60px var(--shadow); z-index:300;
+    display:none; transition:transform .22s ease, opacity .22s ease;
+  }
+  .mini.active{ display:flex; flex-direction:column; }
+  .mini video{ width:100%; height:160px; object-fit:cover; background:#000 }
+  .mini .mini-bar{ display:flex; align-items:center; gap:8px; padding:8px; justify-content:space-between; }
+  .mini-title{ color:var(--gold); font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; }
+
+  /* progress bar small */
+  .progress{ height:6px; background:#222; border-radius:6px; overflow:hidden; width:100% }
+  .progress > i{ display:block; height:100%; width:0%; background:var(--gold); transition:width .08s linear; }
+
+  /* responsive */
+  @media (max-width:700px){
+    main{ margin:10px; }
+    .mini{ right:10px; bottom:10px; width:88vw; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">NusratNama</div>
+  <nav>
+    <a href="#" style="color:inherit;opacity:.9">Home</a>
+  </nav>
+</header>
+
+<main>
+
+  <!-- Player Card (rectangular box) -->
+  <div class="player-card" id="playerCard">
+    <div class="player-top">
+      <!-- video will be moved/used here -->
+      <video id="mainVideo" class="player-rect" playsinline preload="metadata"
+             src="https://archive.org/download/BigBuckBunny_328/BigBuckBunny_512kb.mp4"></video>
+    </div>
+
+    <div class="controls">
+      <div class="left">
+        <button id="prevBtn" class="btn ghost">⏮</button>
+        <button id="playBtn" class="btn">▶ Play</button>
+        <button id="nextBtn" class="btn ghost">⏭</button>
+        <button id="miniBtn" class="btn ghost">Minimize</button>
+      </div>
+
+      <div style="flex:1"></div>
+
+      <div class="time" id="time">00:00 / 00:00</div>
+    </div>
+
+    <div class="meta">
+      <div class="title" id="title">Afreen Afreen (Test)</div>
+      <div class="artist" id="artist">Nusrat Fateh Ali Khan</div>
+    </div>
+  </div>
+
+  <p style="color:var(--muted); margin-top:18px;">This is a simple dark test page with a rectangular player box. Use the controls to play, then click <strong>Minimize</strong> to see the sticky mini-player behavior.</p>
+</main>
+
+<!-- mini player -->
+<div id="mini" class="mini" aria-hidden="true">
+  <video id="miniVideo" playsinline></video>
+  <div class="mini-bar">
+    <div class="mini-title" id="miniTitle">Afreen Afreen (Test)</div>
+    <div style="display:flex;gap:6px;align-items:center">
+      <button id="miniPrev" class="btn ghost">⏮</button>
+      <button id="miniPlay" class="btn">▶</button>
+      <button id="miniClose" class="btn ghost">✖</button>
+    </div>
+  </div>
+  <div style="padding:8px">
+    <div class="progress"><i id="miniProg"></i></div>
+  </div>
+</div>
+
+<script>
+  // Minimal, resilient player logic for the test page
+  const mainVideo = document.getElementById('mainVideo');
+  const playBtn = document.getElementById('playBtn');
+  const miniBtn = document.getElementById('miniBtn');
+  const mini = document.getElementById('mini');
+  const miniVideo = document.getElementById('miniVideo');
+  const miniPlay = document.getElementById('miniPlay');
+  const miniClose = document.getElementById('miniClose');
+  const miniPrev = document.getElementById('miniPrev');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const timeEl = document.getElementById('time');
+  const miniProg = document.getElementById('miniProg');
+
+  // simple sample playlist (urls must be streamable)
+  const PLAYLIST = [
+    { id:1, title:'Afreen Afreen (Test)', file: 'https://archive.org/download/BigBuckBunny_328/BigBuckBunny_512kb.mp4' },
+    { id:2, title:'Elephants Dream', file: 'https://archive.org/download/ElephantsDream/ed_1024_512kb.mp4' }
+  ];
+  let idx = 0;
+  let isMini = false;
+
+  function loadIndex(i){
+    idx = (i + PLAYLIST.length) % PLAYLIST.length;
+    mainVideo.src = PLAYLIST[idx].file;
+    miniVideo.src = PLAYLIST[idx].file;
+    document.getElementById('title').textContent = PLAYLIST[idx].title;
+    document.getElementById('miniTitle').textContent = PLAYLIST[idx].title;
+  }
+
+  // update time/progress
+  function updateTime(){
+    const d = mainVideo.duration || 0;
+    const c = mainVideo.currentTime || 0;
+    timeEl.textContent = `${format(c)} / ${format(d)}`;
+    const pct = d ? (c/d)*100 : 0;
+    miniProg.style.width = pct + '%';
+    requestAnimationFrame(updateTime);
+  }
+  function format(s){ if(!isFinite(s)) return '00:00'; const m=Math.floor(s/60), sec=Math.floor(s%60); return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0'); }
+
+  // play/pause toggles
+  playBtn.addEventListener('click', ()=>{
+    if (mainVideo.paused){ mainVideo.play().catch(()=>{}); playBtn.textContent='⏸ Pause'; }
+    else { mainVideo.pause(); playBtn.textContent='▶ Play'; }
+  });
+
+  miniPlay.addEventListener('click', ()=>{
+    if (miniVideo.paused){ miniVideo.play().catch(()=>{}); miniPlay.textContent='⏸'; }
+    else { miniVideo.pause(); miniPlay.textContent='▶'; }
+  });
+
+  // keep mini and main synced (we will move the same <video> element to mini to avoid double audio)
+  miniBtn.addEventListener('click', ()=> {
+    // move video element into mini to keep continuity
+    if (!isMini){
+      // move mainVideo into mini DOM
+      // store time, then attach element
+      const t = mainVideo.currentTime || 0;
+      const wasPlaying = !mainVideo.paused;
+      mini.insertBefore(mainVideo, mini.firstChild); // move element
+      mainVideo.currentTime = t;
+      if (wasPlaying) mainVideo.play().catch(()=>{});
+      mini.classList.add('active');
+      isMini = true;
+      // update buttons text
+      miniPlay.textContent = mainVideo.paused ? '▶' : '⏸';
+      playBtn.textContent = '▶ Play';
+    }
+  });
+
+  // restore from mini to full
+  mini.addEventListener('click', (e)=>{
+    // if user clicks expand area (not the controls), restore
+    const target = e.target;
+    if (target === mini || target.id==='miniTitle') {
+      const container = document.querySelector('.player-top');
+      container.insertBefore(mainVideo, container.firstChild);
+      mini.classList.remove('active');
+      isMini = false;
+      // keep playing state
+      playBtn.textContent = mainVideo.paused ? '▶ Play' : '⏸ Pause';
+    }
+  });
+
+  miniClose.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    mainVideo.pause();
+    // if mini visible, move back silently and hide
+    if (isMini){
+      const container = document.querySelector('.player-top');
+      container.insertBefore(mainVideo, container.firstChild);
+      mini.classList.remove('active');
+      isMini = false;
+    }
+  });
+
+  // next/prev basic
+  prevBtn.addEventListener('click', ()=> loadIndex(idx-1));
+  nextBtn.addEventListener('click', ()=> loadIndex(idx+1));
+  miniPrev.addEventListener('click', ()=> loadIndex(idx-1));
+  // mini play controls handled above
+
+  // when video ends auto go next and play
+  mainVideo.addEventListener('ended', ()=> { loadIndex(idx+1); mainVideo.play().catch(()=>{}); });
+
+  // initialization
+  loadIndex(0);
+  requestAnimationFrame(updateTime);
+</script>
+</body>
+</html>

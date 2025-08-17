@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NusratNama — All Songs</title>
+<style>
+  /* ===== RESET / THEME ===== */
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; font-family: Georgia, "Times New Roman", serif; background:linear-gradient(180deg,#0d0c0c,#151515); color:#efeae1; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  img { display:block; max-width:100%; }
+
+  :root {
+    --gold:#d4af37;
+    --gold-2:#b9982c;
+    --ink:#080706;
+    --panel:rgba(255,255,255,0.03);
+    --panel-2:rgba(0,0,0,0.15);
+  }
+
+  /* ===== HEADER ===== */
+  header { position:sticky; top:0; left:0; right:0; display:flex; justify-content:space-between; align-items:center; padding:16px 36px; background:rgba(0,0,0,0.8); backdrop-filter:blur(6px); z-index:1200; border-bottom:1px solid rgba(212,175,55,0.08); }
+  .logo { font-weight:700; color:var(--gold); font-size:1.45rem; letter-spacing:0.5px; }
+  nav { display:flex; gap:18px; }
+  nav a { padding:6px 8px; border-radius:6px; font-weight:600; transition:color .25s; }
+  nav a:hover, nav a[aria-current="page"] { color:var(--gold); }
+
+  /* ===== LAYOUT ===== */
+  main { padding:26px 20px 160px; max-width:1200px; margin:0 auto; }
+  .page-title { margin-top:12px; color:var(--gold); text-align:center; font-size:2rem; letter-spacing:.6px; }
+
+  /* ===== SEARCH + CONTROLS ===== */
+  .controls { margin:16px auto 18px; display:grid; grid-template-columns:1fr; gap:10px; max-width:1000px; }
+  @media (min-width:800px){ .controls { grid-template-columns: minmax(340px,1fr) 180px 180px 120px; align-items:center; } }
+
+  .search-input { padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.05); color:inherit; outline:none; font-size:1rem; transition:border .25s, background .25s, box-shadow .25s; }
+  .search-input:focus { border-color:var(--gold); background:rgba(255,255,255,.08); box-shadow:0 0 0 3px rgba(212,175,55,.15); }
+
+  .select, .btn { padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.03); color:inherit; outline:none; font-size:.95rem; cursor:pointer; transition:background .25s, border .25s; }
+  .select:hover, .btn:hover { background:rgba(255,255,255,.06); }
+  .btn.gold { background:var(--gold); color:var(--ink); border:none; font-weight:700; }
+  .btn.gold:hover { background:var(--gold-2); }
+
+  /* ===== PLAYLIST STRIP (HORIZONTAL) ===== */
+  .strip-wrap { margin:18px auto 24px; max-width:1200px; }
+  .strip-title { font-weight:700; color:var(--gold); margin-bottom:10px; padding:0 2px; }
+  .strip { display:flex; gap:14px; overflow:auto; padding-bottom:6px; scroll-snap-type:x proximity; }
+  .strip::-webkit-scrollbar { height:8px; }
+  .strip::-webkit-scrollbar-thumb { background:rgba(255,255,255,.15); border-radius:8px; }
+  .pl-card { min-width:240px; background:linear-gradient(160deg,var(--panel),var(--panel-2)); border:1px solid rgba(255,255,255,.08); border-radius:14px; overflow:hidden; cursor:pointer; scroll-snap-align:start; transition: transform .25s, box-shadow .25s; }
+  .pl-card:hover { transform:translateY(-6px); box-shadow:0 12px 40px rgba(212,175,55,0.12); }
+  .pl-cover { height:120px; object-fit:cover; width:100%; filter:saturate(1.05) contrast(1.02); }
+  .pl-body { padding:10px 12px; }
+  .pl-title { color:var(--gold); font-weight:700; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pl-desc { font-size:.9rem; color:#bfb7ac; }
+
+  /* ===== SONGS GRID ===== */
+  .songs-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap:20px; }
+  .song-card { background:linear-gradient(180deg, var(--panel), var(--panel-2)); border:1px solid rgba(255,255,255,0.08); border-radius:14px; overflow:hidden; cursor:pointer; transition: transform .22s, box-shadow .22s; display:flex; flex-direction:column; position:relative; }
+  .song-card:hover { transform:translateY(-6px) scale(1.01); box-shadow:0 12px 40px rgba(212,175,55,0.12); }
+  .song-thumb { width:100%; height:160px; object-fit:cover; transition:transform .4s; }
+  .song-card:hover .song-thumb { transform:scale(1.05); }
+  .song-content { padding:12px 14px; display:flex; flex-direction:column; gap:6px; }
+  .song-title { font-weight:700; font-size:1.05rem; color:var(--gold); text-overflow:ellipsis; white-space:nowrap; overflow:hidden; }
+  .song-meta { font-size:.95rem; color:#bfb7ac; font-style:italic; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .tags { font-size:.8rem; display:flex; gap:6px; flex-wrap:wrap; margin-top:4px; }
+  .tag { padding:2px 6px; border-radius:4px; font-weight:600; font-size:.78rem; border:1px solid rgba(255,255,255,.08); background:rgba(212,175,55,.08); color:#f6e7b5; }
+
+  .card-actions { position:absolute; right:8px; bottom:8px; display:flex; gap:8px; }
+  .icon-btn { border:none; background:rgba(0,0,0,.5); color:#f0e8d8; padding:6px 8px; border-radius:8px; cursor:pointer; transition:background .2s; }
+  .icon-btn:hover { background:rgba(0,0,0,.7); }
+
+  /* ===== PAGINATION ===== */
+  .pager { display:flex; justify-content:center; margin:18px 0 8px; }
+  .hidden { display:none !important; }
+
+  /* ===== MINI PLAYER (bottom-right) ===== */
+  .mini { position:fixed; right:22px; bottom:22px; width:360px; max-width:90vw; background:#111; border:1px solid rgba(212,175,55,0.12); border-radius:14px; box-shadow:0 12px 40px rgba(0,0,0,.45); z-index:1400; overflow:hidden; transform:translateY(20px); opacity:0; pointer-events:none; transition:transform .28s ease, opacity .28s ease; }
+  .mini.active { transform:translateY(0); opacity:1; pointer-events:auto; }
+  .mini-head { display:flex; gap:10px; align-items:center; padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.06); }
+  .mini-thumb { width:54px; height:54px; object-fit:cover; border-radius:10px; }
+  .mini-title { flex:1; min-width:0; }
+  .mini-title .t { color:var(--gold); font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mini-title .a { font-size:.9rem; color:#bfb7ac; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mini-controls { display:flex; align-items:center; gap:8px; }
+  .mini-controls .btn { padding:6px 10px; border-radius:8px; background:var(--gold); color:var(--ink); border:none; font-weight:700; }
+  .mini-controls .btn:hover { background:var(--gold-2); }
+  .mini video { width:100%; display:block; max-height:220px; background:#000; }
+  .mini-bottom { display:flex; align-items:center; gap:10px; padding:8px 12px; }
+  .progress-bar { flex:1; height:6px; background:#333; border-radius:4px; overflow:hidden; cursor:pointer; }
+  .progress { height:100%; width:0; background:var(--gold); transition:width 0.1s linear; }
+  .vol { width:84px; }
+  .close-x { background:transparent; border:none; color:#e9dfc7; font-size:20px; cursor:pointer; padding:4px; }
+
+  /* ===== UTIL ===== */
+  .fade-in { animation:fade .5s ease; }
+  @keyframes fade { from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none} }
+</style>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header>
+    <div class="logo">NusratNama</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="legacy.html">Legacy</a>
+      <a href="discover.html">Discover</a>
+      <a href="join.html">Join</a>
+      <a href="allsongs.html" aria-current="page">All Songs</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1 class="page-title">All Songs</h1>
+
+    <!-- ===== CONTROLS: SEARCH + FILTERS + SORT ===== -->
+    <section class="controls">
+      <input id="search" class="search-input" type="search" placeholder="Search by song title, artist, or tag…" />
+      <select id="filterTag" class="select">
+        <option value="">All moods/tags</option>
+        <option value="love">Love • Romance</option>
+        <option value="spiritual">Spiritual • Devotional</option>
+        <option value="sufi">Sufi</option>
+        <option value="live">Live</option>
+        <option value="celebration">Energy • Celebration</option>
+        <option value="legendary">Legendary</option>
+      </select>
+      <select id="sortBy" class="select">
+        <option value="popular">Sort: Most Played</option>
+        <option value="az">Sort: A → Z</option>
+        <option value="new">Sort: Newest</option>
+      </select>
+      <button id="reset" class="btn">Reset</button>
+    </section>
+
+    <!-- ===== PLAYLIST STRIP ===== -->
+    <section class="strip-wrap">
+      <div class="strip-title">Curated Playlists</div>
+      <div id="playlistStrip" class="strip"></div>
+    </section>
+
+    <!-- ===== SONGS GRID ===== -->
+    <section>
+      <div id="songsGrid" class="songs-grid"></div>
+      <div class="pager"><button id="loadMore" class="btn gold hidden">Load more</button></div>
+    </section>
+  </main>
+
+  <!-- ===== MINI PLAYER (sticky bottom-right) ===== -->
+  <div id="mini" class="mini" aria-live="polite">
+    <div class="mini-head">
+      <img id="miniThumb" class="mini-thumb" alt="cover" src="" />
+      <div class="mini-title">
+        <div id="miniT" class="t">—</div>
+        <div id="miniA" class="a">—</div>
+      </div>
+      <div class="mini-controls">
+        <button id="btnPrev" class="btn" title="Previous">⏮️</button>
+        <button id="btnPlay" class="btn" title="Play/Pause">▶️</button>
+        <button id="btnNext" class="btn" title="Next">⏭️</button>
+      </div>
+      <button id="btnCloseMini" class="close-x" title="Close">✕</button>
+    </div>
+    <video id="miniVideo" playsinline></video>
+    <div class="mini-bottom">
+      <div id="bar" class="progress-bar"><div id="barP" class="progress"></div></div>
+      <input id="vol" class="vol" type="range" min="0" max="1" step="0.01" value="0.9" />
+      <button id="btnOpenPlayer" class="btn" title="Open player page">Open</button>
+    </div>
+  </div>
+
+<script>
+/***** DATA *****/
+// Tip: move to songs.js later and import. For now, inline demo.
+const SONGS = [
+  { id:1, title:'Afreen Afreen', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/mov_bbb.mp4', cover:'https://placehold.co/600x320/1b1a19/efeae1?text=Afreen+Afreen', tags:['love','legendary'], plays: 15234, added:'2024-09-03' },
+  { id:2, title:'Tajdar-e-Haram (Live)', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/movie.mp4', cover:'https://placehold.co/600x320/1b1a19/efeae1?text=Tajdar-e-Haram', tags:['spiritual','live'], plays: 20291, added:'2023-12-10' },
+  { id:3, title:'Ye Jo Halka Halka Suroor Hai', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/mov_bbb.mp4', cover:'https://placehold.co/600x320/1b1a19/efeae1?text=Halka+Halka+Suroor', tags:['love','sufi'], plays: 51290, added:'2022-05-14' },
+  { id:4, title:'Sanson Ki Mala Pe', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/movie.mp4', cover:'https://placehold.co/600x320/1b1a19/efeae1?text=Sanson+Ki+Mala', tags:['spiritual','devotional'], plays: 34100, added:'2021-02-18' },
+  { id:5, title:'Dum Mast Qalandar', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/mov_bbb.mp4', cover:'https://placehold.co/600x320/1b1a19/efeae1?text=Dum+Mast+Qalandar', tags:['sufi','celebration'], plays: 78020, added:'2019-10-11' },
+  { id:6, title:'Mera Piya Ghar Aya', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/movie.mp4', cover:'https://placehold.co/600x320/1b1a19/efeae1?text=Mera+Piya+Ghar+Aaya', tags:['celebration','legendary'], plays: 26340, added:'2020-08-01' },
+  { id:7, title:'Kinna Sona Tenu', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/mov_bbb.mp4', cover:'https://placehold.co/600x320/1b1a19/efeae1?text=Kinna+Sona+Tenu', tags:['love'], plays: 11800, added:'2024-01-20' },
+  { id:8, title:'Man Kunto Maula', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/movie.mp4', cover:'https://placehold.co/600x320/1b1a19/efeae1?text=Man+Kunto+Maula', tags:['sufi','live'], plays: 45210, added:'2018-06-09' }
+];
+
+const PLAYLISTS = [
+  { id:'pl-love', title:'Love Qawwalis', desc:'Ishq • Romance • Dil se', cover:'https://placehold.co/600x300/d4af37/080706?text=Love+Qawwalis', tags:['love'] },
+  { id:'pl-spiritual', title:'Spiritual', desc:'Ruhaniyat & devotion', cover:'https://placehold.co/600x300/d4af37/080706?text=Spiritual', tags:['spiritual','devotional'] },
+  { id:'pl-live', title:'Live Performances', desc:'Mehfil • stage magic', cover:'https://placehold.co/600x300/d4af37/080706?text=Live+Performances', tags:['live'] },
+  { id:'pl-legend', title:'Top 10 Legendary', desc:'Evergreen masterworks', cover:'https://placehold.co/600x300/d4af37/080706?text=Legendary', tags:['legendary'] }
+];
+
+/***** STATE *****/
+let state = {
+  query: '',
+  tag: '',
+  sort: 'popular',
+  page: 1,
+  pageSize: 8, // increase to simulate infinite
+  filtered: [...SONGS],
+  currentIndex: -1
+};
+
+/***** ELEMENTS *****/
+const elGrid = document.getElementById('songsGrid');
+const elLoad = document.getElementById('loadMore');
+const elSearch = document.getElementById('search');
+const elTag = document.getElementById('filterTag');
+const elSort = document.getElementById('sortBy');
+const elReset = document.getElementById('reset');
+const strip = document.getElementById('playlistStrip');
+
+// mini player elements
+const mini = document.getElementById('mini');
+const v = document.getElementById('miniVideo');
+const miniT = document.getElementById('miniT');
+const miniA = document.getElementById('miniA');
+const miniThumb = document.getElementById('miniThumb');
+const btnPrev = document.getElementById('btnPrev');
+const btnPlay = document.getElementById('btnPlay');
+const btnNext = document.getElementById('btnNext');
+const btnCloseMini = document.getElementById('btnCloseMini');
+const btnOpenPlayer = document.getElementById('btnOpenPlayer');
+const bar = document.getElementById('bar');
+const barP = document.getElementById('barP');
+const vol = document.getElementById('vol');
+
+/***** RENDER: PLAYLIST STRIP *****/
+function renderPlaylists(){
+  strip.innerHTML = '';
+  PLAYLISTS.forEach(pl=>{
+    const card = document.createElement('div');
+    card.className = 'pl-card fade-in';
+    card.innerHTML = `
+      <img class="pl-cover" src="${pl.cover}" alt="${pl.title}">
+      <div class="pl-body">
+        <div class="pl-title">${pl.title}</div>
+        <div class="pl-desc">${pl.desc}</div>
+      </div>
+    `;
+    card.addEventListener('click', ()=>{
+      elTag.value = '';
+      state.tag = '';
+      // Filter by playlist tags
+      state.query = '';
+      elSearch.value = '';
+      filterAndRender({ playlistTags: pl.tags });
+    });
+    strip.appendChild(card);
+  });
+}
+
+/***** FILTER / SORT *****/
+function filterSongs(list, {playlistTags}={}){
+  const q = state.query.trim().toLowerCase();
+  const tag = state.tag.trim().toLowerCase();
+
+  let res = list.filter(s=>{
+    const inText = !q || s.title.toLowerCase().includes(q) || s.artist.toLowerCase().includes(q) || s.tags.some(t=>t.toLowerCase().includes(q));
+    const inTag = !tag || s.tags.map(t=>t.toLowerCase()).includes(tag);
+    const inPl = !playlistTags || playlistTags.some(t=> s.tags.map(x=>x.toLowerCase()).includes(t.toLowerCase()));
+    return inText && inTag && inPl;
+  });
+
+  if(state.sort==='az') res.sort((a,b)=> a.title.localeCompare(b.title));
+  if(state.sort==='new') res.sort((a,b)=> new Date(b.added)-new Date(a.added));
+  if(state.sort==='popular') res.sort((a,b)=> b.plays - a.plays);
+  return res;
+}
+
+function filterAndRender(opts={}){
+  state.page = 1;
+  state.filtered = filterSongs(SONGS, opts);
+  renderSongs();
+}
+
+/***** RENDER: SONG CARDS with pagination *****/
+function renderSongs(){
+  elGrid.innerHTML = '';
+  const end = state.page * state.pageSize;
+  const slice = state.filtered.slice(0, end);
+  slice.forEach((song, idx)=> elGrid.appendChild(makeSongCard(song, idx)) );
+  // pager
+  if(end < state.filtered.length){ elLoad.classList.remove('hidden'); }
+  else { elLoad.classList.add('hidden'); }
+}
+
+function makeSongCard(song, idx){
+  const card = document.createElement('div');
+  card.className = 'song-card fade-in';
+  card.innerHTML = `
+    <img class="song-thumb" src="${song.cover}" alt="${song.title}">
+    <div class="song-content">
+      <div class="song-title" title="${song.title}">${song.title}</div>
+      <div class="song-meta">${song.artist}</div>
+      <div class="tags">${song.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+    </div>
+    <div class="card-actions">
+      <button class="icon-btn" title="Play">▶️</button>
+      <button class="icon-btn more" title="More">⋯</button>
+    </div>
+  `;
+  // Play from card
+  card.querySelector('.icon-btn').addEventListener('click', (e)=>{ e.stopPropagation(); playSongById(song.id); });
+  // Whole card also plays
+  card.addEventListener('click', ()=> playSongById(song.id));
+  // 3-dot menu -> open player page
+  card.querySelector('.more').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    openPlayerPage(song.id);
+  });
+  return card;
+}
+
+/***** PLAYER PAGE NAV *****/
+function openPlayerPage(id){
+  // Navigate to dedicated player page with query string
+  window.location.href = `player.html?id=${encodeURIComponent(id)}`;
+}
+
+/***** MINI PLAYER LOGIC *****/
+function playSongById(id){
+  const list = state.filtered.length ? state.filtered : SONGS;
+  const idx = list.findIndex(s=> s.id===id);
+  if(idx===-1) return;
+  state.currentIndex = idx;
+  const s = list[idx];
+  miniThumb.src = s.cover; miniT.textContent = s.title; miniA.textContent = s.artist;
+  v.src = s.file; // HTML5 video
+  v.play().catch(()=>{/* autoplay might fail until user gesture; but click triggers play */});
+  ensureMini(true);
+}
+
+function ensureMini(on){
+  if(on){ mini.classList.add('active'); }
+  else { mini.classList.remove('active'); v.pause(); v.removeAttribute('src'); v.load(); }
+}
+
+btnCloseMini.addEventListener('click', ()=> ensureMini(false));
+btnPlay.addEventListener('click', ()=>{ if(v.paused){ v.play(); } else { v.pause(); } });
+btnPrev.addEventListener('click', ()=> step(-1));
+btnNext.addEventListener('click', ()=> step(1));
+btnOpenPlayer.addEventListener('click', ()=>{
+  const cur = getCurrentSong(); if(cur) openPlayerPage(cur.id);
+});
+
+function getCurrentSong(){
+  const list = state.filtered.length ? state.filtered : SONGS;
+  if(state.currentIndex<0 || state.currentIndex>=list.length) return null;
+  return list[state.currentIndex];
+}
+
+function step(delta){
+  const list = state.filtered.length ? state.filtered : SONGS;
+  if(!list.length) return;
+  let i = state.currentIndex + delta;
+  if(i<0) i = 0; if(i>=list.length) i = list.length-1;
+  playSongById(list[i].id);
+}
+
+// progress & seek
+v.addEventListener('timeupdate', ()=>{
+  if(!isFinite(v.duration) || v.duration===0) return;
+  barP.style.width = (v.currentTime / v.duration * 100) + '%';
+});
+bar.addEventListener('click', (e)=>{
+  if(!isFinite(v.duration) || v.duration===0) return;
+  const r = bar.getBoundingClientRect();
+  const ratio = (e.clientX - r.left) / r.width;
+  v.currentTime = ratio * v.duration;
+});
+vol.addEventListener('input', ()=> v.volume = +vol.value);
+
+/***** EVENTS: CONTROLS *****/
+elSearch.addEventListener('input', ()=>{ state.query = elSearch.value; filterAndRender(); });
+elTag.addEventListener('change', ()=>{ state.tag = elTag.value; filterAndRender(); });
+elSort.addEventListener('change', ()=>{ state.sort = elSort.value; filterAndRender(); });
+elReset.addEventListener('click', ()=>{ state.query=''; state.tag=''; state.sort='popular'; elSearch.value=''; elTag.value=''; elSort.value='popular'; filterAndRender(); });
+elLoad.addEventListener('click', ()=>{ state.page++; renderSongs(); });
+
+/***** INIT *****/
+renderPlaylists();
+filterAndRender();
+</script>
+<script src="playerManager.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NusratNama — Legacy</title>
+  <meta name="description" content="Legacy of Nusrat Fateh Ali Khan — timeline, awards, performances and impact.">
+  <style>
+    /* ===== RESET ===== */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family: Georgia, "Times New Roman", serif;
+      background:#080706;
+      color:#efeae1;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.5;
+    }
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+
+    /* ===== THEME VARS ===== */
+    :root{
+      --gold:#d4af37;
+      --maroon:#58151c;
+      --muted:#bfb7ac;
+      --card:#151414;
+      --glass: rgba(0,0,0,0.55);
+      --maxWidth:1100px;
+    }
+
+    /* ===== HEADER (consistent with home) ===== */
+    header{
+      position:fixed; top:0; left:0; right:0; z-index:1200;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 36px; background: linear-gradient(rgba(0,0,0,0.20), rgba(0,0,0,0.08));
+      backdrop-filter: blur(6px); border-bottom:1px solid rgba(212,175,55,0.06);
+      transition: background .22s, padding .22s;
+    }
+    header.scrolled{ background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.55)); padding:12px 28px; }
+    .logo{ color:var(--gold); font-weight:700; font-size:1.45rem; letter-spacing:1px }
+    nav{ display:flex; gap:18px; align-items:center }
+    nav a{ color:#efeae1; font-weight:600; padding:6px 8px; border-radius:6px; position:relative }
+    nav a::after{ content:''; position:absolute; left:0; bottom:-8px; height:2px; width:0; background:var(--gold); transition:width .24s }
+    nav a:hover{ color:var(--gold) } nav a:hover::after{ width:100% }
+
+    /* ===== HERO (background only here) ===== */
+    .hero{
+      position:relative; height:64vh; min-height:520px; display:flex; align-items:center; justify-content:center;
+      padding-top:72px; overflow:hidden;
+    }
+    .hero .hero-bg{
+      position:absolute; inset:0; z-index:0;
+      background-image:url('legacy-hero.jpg'); /* REPLACE: hero background */
+      background-size:cover; background-position:center;
+      transform-origin:center center;
+      animation: kenburns 26s ease-in-out infinite alternate;
+    }
+    @keyframes kenburns{ from{ transform: scale(1) } to{ transform: scale(1.06) translateY(-8px)} }
+    .hero .overlay{
+      position:absolute; inset:0; z-index:1;
+      background: linear-gradient(180deg, rgba(0,0,0,0.4), rgba(0,0,0,0.7));
+    }
+    #particle-hero{ position:absolute; inset:0; z-index:2; pointer-events:none; opacity:0.22 }
+
+    .hero-inner{
+      position:relative; z-index:3; max-width:var(--maxWidth); width:100%; padding:28px; text-align:center;
+    }
+    .hero-title{ font-size:2.6rem; color:var(--gold); letter-spacing:0.6px; text-shadow:0 8px 34px rgba(0,0,0,0.4) }
+    .hero-sub{ color:var(--muted); margin-top:10px; font-size:1.05rem }
+    .hero-sub .urdu{ display:block; color:#f5e9d8; font-size:.95rem; margin-top:8px; opacity:.95 }
+
+    .hero-cta{
+      margin-top:18px; display:inline-flex; gap:12px; align-items:center;
+    }
+    .btn-ghost{
+      border:1px solid rgba(255,255,255,0.06); color:var(--muted); padding:8px 14px; border-radius:8px; cursor:pointer;
+    }
+    .btn-primary{
+      background:linear-gradient(180deg,var(--gold), #caa227); color:#080706; padding:10px 18px; border-radius:10px; font-weight:700; cursor:pointer;
+      box-shadow:0 10px 30px rgba(212,175,55,0.10);
+    }
+
+    /* ===== CONTAINER ===== */
+    .container{ max-width:var(--maxWidth); margin:0 auto; padding:38px 20px; }
+
+    /* ===== SECTION TITLE ===== */
+    .section-title{ font-size:1.4rem; color:var(--gold); margin-bottom:12px; letter-spacing:.6px; font-weight:700 }
+
+    /* ===== TIMELINE (vertical) ===== */
+    .timeline{
+      position:relative; margin-top:10px; padding-left:18px;
+    }
+    .timeline::before{
+      content:''; position:absolute; left:9px; top:0; bottom:0; width:2px; background: linear-gradient(180deg, rgba(212,175,55,0.15), rgba(212,175,55,0.06));
+      border-radius:2px;
+    }
+    .milestone{ position:relative; margin:20px 0 20px 24px; display:grid; grid-template-columns:120px 1fr; gap:16px; align-items:start }
+    .milestone .year{ font-size:1.05rem; color:var(--gold); font-weight:700; min-width:110px }
+    .milestone .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.05));
+      padding:14px; border-radius:10px; border:1px solid rgba(255,255,255,0.03);
+      box-shadow:0 8px 20px rgba(0,0,0,0.6);
+    }
+    .milestone img{ width:100%; height:92px; object-fit:cover; border-radius:8px; margin-bottom:10px }
+
+    /* milestone quote */
+    .milestone .quote{ color:var(--muted); font-style:italic; margin-top:8px; font-size:0.95rem }
+
+    /* ===== AWARDS WALL ===== */
+    .awards-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap:18px; margin-top:14px }
+    .award{
+      background:var(--card); padding:12px; border-radius:8px; text-align:center; border:1px solid rgba(255,255,255,0.03);
+      cursor:pointer; transition:transform .16s ease, box-shadow .16s ease;
+    }
+    .award:hover{ transform:translateY(-6px); box-shadow:0 10px 28px rgba(0,0,0,0.6) }
+    .award .icon{ font-size:1.6rem; color:var(--gold); margin-bottom:8px }
+
+    /* ===== WORLD MAP (placeholder) ===== */
+    .map-wrap{ margin-top:18px; border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,0.03); background:linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.45)); padding:18px }
+    .map-placeholder{
+      width:100%; height:240px; display:flex; align-items:center; justify-content:center; color:var(--muted);
+      background: linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+      border-radius:8px; font-size:1rem;
+    }
+
+    /* ===== COLLAB CAROUSEL ===== */
+    .carousel{ display:flex; gap:12px; overflow:hidden; padding-bottom:12px; margin-top:12px }
+    .carousel-track{ display:flex; gap:12px; transition: transform .5s cubic-bezier(.2,.9,.2,1) }
+    .collab-card{ flex:0 0 240px; background:var(--card); padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.03) }
+    .collab-card img{ width:100%; height:120px; object-fit:cover; border-radius:6px; margin-bottom:8px }
+
+    .carousel-controls{ display:flex; gap:8px; margin-top:8px }
+    .ctrl{ background:rgba(255,255,255,0.03); padding:8px 10px; border-radius:8px; cursor:pointer }
+
+    /* ===== QUOTE WALL & SNIPPETS ===== */
+    .quote-wall{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:12px; margin-top:12px }
+    .big-quote{ background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.05)); padding:18px; border-radius:10px; font-style:italic; color:var(--muted) }
+    .voice-snip{ display:flex; gap:10px; align-items:center }
+
+    /* ===== PERFORMANCE GALLERY (lightbox) ===== */
+    .gallery{ display:grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap:12px; margin-top:12px }
+    .video-thumb{ position:relative; border-radius:8px; overflow:hidden; background:#0f0f0f; cursor:pointer; border:1px solid rgba(255,255,255,0.03) }
+    .video-thumb img{ width:100%; height:160px; object-fit:cover }
+    .video-thumb .caption{ padding:10px; color:var(--muted); font-size:0.95rem }
+
+    /* lightbox */
+    .lightbox{ position:fixed; inset:0; background:rgba(0,0,0,0.85); display:none; align-items:center; justify-content:center; z-index:1600 }
+    .lightbox.active{ display:flex }
+    .lightbox .inner{ width:90%; max-width:980px; background:transparent; border-radius:8px }
+
+    /* ===== CLOSING TRIBUTE ===== */
+    .closing{
+      margin-top:28px; padding:28px; border-radius:10px; background:linear-gradient(180deg, rgba(0,0,0,0.36), rgba(0,0,0,0.5));
+      text-align:center; border:1px solid rgba(255,255,255,0.02)
+    }
+    .closing h2{ color:var(--gold); font-size:1.6rem; margin-bottom:12px }
+
+    /* ===== FOOTER (same style as home) ===== */
+    footer{ margin-top:36px; padding:26px 20px; text-align:center; color:var(--muted); background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.7)); }
+    footer .socials{ display:flex; gap:12px; justify-content:center; margin-top:12px }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width:880px){
+      .hero-title{ font-size:2rem }
+      .milestone{ grid-template-columns: 1fr; gap:12px }
+      .milestone .year{ order:2 }
+    }
+    @media (max-width:560px){
+      header{ padding:12px 16px }
+      .hero{ min-height:52vh }
+      .carousel{ padding-bottom:8px }
+      .collab-card{ flex:0 0 200px }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header id="site-header">
+    <div class="logo">NusratNama</div>
+    <nav aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="legacy.html" aria-current="page">Legacy</a>
+      <a href="discover.html">Discover</a>
+      <a href="join.html">Join</a>
+    </nav>
+  </header>
+
+  <!-- HERO (background only here) -->
+  <section class="hero" id="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <canvas id="particle-hero" aria-hidden="true"></canvas>
+    <div class="overlay" aria-hidden="true"></div>
+
+    <div class="hero-inner" role="region" aria-labelledby="hero-title">
+      <div id="hero-title" class="hero-title">Legacy of Nusrat Fateh Ali Khan</div>
+      <div class="hero-sub">A tribute to the voice that crossed borders
+        <span class="urdu">— صوت کا شہنشاہ</span>
+      </div>
+
+      <div class="hero-cta" role="group" aria-label="Hero actions">
+        <button class="btn-primary" id="btn-tour">Explore Timeline</button>
+        <button class="btn-ghost" id="btn-watch">Watch Performances</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN CONTENT -->
+  <main class="container" id="main">
+
+    <!-- TIMELINE -->
+    <section aria-labelledby="timeline-title">
+      <h2 id="timeline-title" class="section-title">Life Timeline</h2>
+
+      <div class="timeline" id="timeline">
+        <!-- milestone 1 (placeholder) -->
+        <div class="milestone">
+          <div class="year">1948</div>
+          <div class="card">
+            <img src="placeholder-1.jpg" alt="Birthplace placeholder (replace)">
+            <strong>Early Life & Roots</strong>
+            <p class="quote">Lorem ipsum — placeholder text describing birth and early music exposure. Replace with factual content later.</p>
+            <div class="quote">“A short notable quote or context for this milestone.”</div>
+          </div>
+        </div>
+
+        <!-- milestone 2 (placeholder) -->
+        <div class="milestone">
+          <div class="year">1975</div>
+          <div class="card">
+            <img src="placeholder-2.jpg" alt="Performance placeholder (replace)">
+            <strong>Breakthrough Performances</strong>
+            <p class="quote">Short description about breakthrough - dummy content for now.</p>
+            <div class="quote">“Sample quote or note.”</div>
+          </div>
+        </div>
+
+        <!-- milestone 3 -->
+        <div class="milestone">
+          <div class="year">1987</div>
+          <div class="card">
+            <img src="placeholder-3.jpg" alt="Award placeholder">
+            <strong>International Recognition</strong>
+            <p class="quote">Dummy text describing global tours and collaborations.</p>
+            <div class="quote">“A short excerpt about global influence.”</div>
+          </div>
+        </div>
+
+        <!-- milestone 4 -->
+        <div class="milestone">
+          <div class="year">1996</div>
+          <div class="card">
+            <img src="placeholder-4.jpg" alt="Later years placeholder">
+            <strong>Legacy & Continued Influence</strong>
+            <p class="quote">Placeholder text describing later years and continuing legacy.</p>
+            <div class="quote">“A reflective quote about music & spirituality.”</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AWARDS & IMPACT -->
+    <section aria-labelledby="awards-title" style="margin-top:28px">
+      <h2 id="awards-title" class="section-title">Awards & Global Impact</h2>
+
+      <div class="awards-grid">
+        <div class="award" data-award="Grammy Nomination">
+          <div class="icon">🏆</div>
+          <div class="title">Grammy / International</div>
+        </div>
+        <div class="award" data-award="UNESCO Recognition">
+          <div class="icon">🌍</div>
+          <div class="title">Global Cultural Recognition</div>
+        </div>
+        <div class="award" data-award="Major Tours">
+          <div class="icon">🎤</div>
+          <div class="title">Tours & Concerts</div>
+        </div>
+        <div class="award" data-award="Collaborations">
+          <div class="icon">🤝</div>
+          <div class="title">Cross-genre Collaborations</div>
+        </div>
+      </div>
+
+      <div class="map-wrap" aria-hidden="false">
+        <div class="map-placeholder">World map placeholder — pins & hover details (replace with interactive map later)</div>
+      </div>
+    </section>
+
+    <!-- COLLABORATIONS -->
+    <section aria-labelledby="collab-title" style="margin-top:28px">
+      <h2 id="collab-title" class="section-title">Collaborations & Influence</h2>
+
+      <div class="carousel" id="collab-carousel">
+        <div class="carousel-track" id="collab-track">
+          <div class="collab-card">
+            <img src="collab-1.jpg" alt="Collab 1">
+            <strong>Artist A (placeholder)</strong>
+            <p style="color:var(--muted)">Short note: worked together on x project.</p>
+          </div>
+          <div class="collab-card">
+            <img src="collab-2.jpg" alt="Collab 2">
+            <strong>Artist B (placeholder)</strong>
+            <p style="color:var(--muted)">Short note: collaborative influence described here.</p>
+          </div>
+          <div class="collab-card">
+            <img src="collab-3.jpg" alt="Collab 3">
+            <strong>Artist C (placeholder)</strong>
+            <p style="color:var(--muted)">Short note: collaboration context.</p>
+          </div>
+          <div class="collab-card">
+            <img src="collab-4.jpg" alt="Collab 4">
+            <strong>Artist D (placeholder)</strong>
+            <p style="color:var(--muted)">Short note: collaboration details.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="carousel-controls">
+        <button class="ctrl" id="collab-prev">◀</button>
+        <button class="ctrl" id="collab-next">▶</button>
+      </div>
+    </section>
+
+    <!-- QUOTE WALL + VOICE SNIPPETS -->
+    <section aria-labelledby="quotes-title" style="margin-top:28px">
+      <h2 id="quotes-title" class="section-title">Philosophy & Voice</h2>
+
+      <div class="quote-wall">
+        <div class="big-quote">"Music is the pathway to devotion." — <em>Placeholder</em></div>
+        <div class="big-quote">"When words fail, music speaks." — <em>Placeholder</em></div>
+        <div class="big-quote">"A performance is a prayer in sound." — <em>Placeholder</em></div>
+      </div>
+
+      <div style="margin-top:12px">
+        <div class="voice-snip">
+          <button class="btn-ghost" data-sample="placeholder-voice-1.mp3">Play Voice Snippet</button>
+          <div style="color:var(--muted);">Short spoken excerpt (placeholder)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PERFORMANCE GALLERY -->
+    <section aria-labelledby="performances-title" style="margin-top:28px">
+      <h2 id="performances-title" class="section-title">Iconic Performances</h2>
+
+      <div class="gallery" id="gallery">
+        <div class="video-thumb" data-video="https://www.youtube.com/watch?v=VIDEO_ID_1">
+          <img src="thumb-vid-1.jpg" alt="Performance 1">
+          <div class="caption">Performance title & context (placeholder)</div>
+        </div>
+        <div class="video-thumb" data-video="https://www.youtube.com/watch?v=VIDEO_ID_2">
+          <img src="thumb-vid-2.jpg" alt="Performance 2">
+          <div class="caption">Performance title & context (placeholder)</div>
+        </div>
+        <div class="video-thumb" data-video="https://www.youtube.com/watch?v=VIDEO_ID_3">
+          <img src="thumb-vid-3.jpg" alt="Performance 3">
+          <div class="caption">Performance title & context (placeholder)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLOSING TRIBUTE -->
+    <section style="margin-top:28px">
+      <div class="closing">
+        <h2>“A voice that will echo for centuries...”</h2>
+        <p style="color:var(--muted)">This space is a tribute — curated memories, sounds, and stories. Replace the placeholders with verified images, dates and notes.</p>
+        <div style="margin-top:12px">
+          <a href="discover.html" class="btn-primary">Continue the Journey</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- LIGHTBOX for video -->
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="inner" role="document">
+      <div id="lightbox-close" style="position:relative; text-align:right; margin-bottom:8px">
+        <button class="btn-ghost" aria-label="Close video">Close ✕</button>
+      </div>
+      <div id="lightbox-content" style="background:#000; padding:12px; border-radius:8px;">
+        <!-- iframe inserted here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div style="max-width:var(--maxWidth); margin:0 auto; padding:8px 12px;">
+      <div style="font-weight:700; color:var(--gold)">NusratNama</div>
+      <div style="color:var(--muted); margin-top:6px">A soulful tribute by Vaibhav Gorana — © 2025 NusratNama</div>
+      <div class="socials" aria-hidden="false">
+        <a href="https://youtube.com" target="_blank" rel="noreferrer">YouTube</a>
+        <a href="https://instagram.com" target="_blank" rel="noreferrer">Instagram</a>
+        <a href="#" target="_blank" rel="noreferrer">Spotify</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script>
+  /* ========= Header scroll behaviour ========= */
+  (function(){
+    const hdr = document.getElementById('site-header');
+    window.addEventListener('scroll', () => {
+      hdr.classList.toggle('scrolled', window.scrollY > 36);
+    });
+  })();
+
+  /* ========= Hero particles (light) ========= */
+  (function(){
+    const canvas = document.getElementById('particle-hero');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let w = canvas.width = canvas.clientWidth || innerWidth;
+    let h = canvas.height = canvas.clientHeight || innerHeight;
+    const parts = [];
+    for(let i=0;i<28;i++){
+      parts.push({ x: Math.random()*w, y: Math.random()*h, r: 0.6+Math.random()*2, vx:(Math.random()-0.5)*0.25, vy:(Math.random()-0.5)*0.25, a:0.06+Math.random()*0.12 });
+    }
+    function resize(){ w = canvas.width = canvas.clientWidth || innerWidth; h = canvas.height = canvas.clientHeight || innerHeight; }
+    window.addEventListener('resize', resize);
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      for(const p of parts){
+        p.x += p.vx; p.y += p.vy;
+        if(p.x < -20) p.x = w+20;
+        if(p.x > w+20) p.x = -20;
+        if(p.y < -20) p.y = h+20;
+        if(p.y > h+20) p.y = -20;
+        ctx.beginPath();
+        ctx.fillStyle = 'rgba(255,230,170,'+p.a+')';
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+
+  /* ========= Smooth reveal for sections (IntersectionObserver) ========= */
+  (function(){
+    const obs = new IntersectionObserver((entries)=> {
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          e.target.style.opacity = 1;
+          e.target.style.transform = 'translateY(0)';
+        } else {
+          e.target.style.opacity = 0;
+          e.target.style.transform = 'translateY(10px)';
+        }
+      });
+    }, { threshold: 0.09 });
+    document.querySelectorAll('section, .milestone, .award, .collab-card, .video-thumb').forEach(el=>{
+      el.style.opacity = 0;
+      el.style.transform = 'translateY(10px)';
+      el.style.transition = 'opacity .7s ease, transform .7s ease';
+      obs.observe(el);
+    });
+  })();
+
+  /* ========= Carousel (simple) ========= */
+  (function(){
+    const track = document.getElementById('collab-track');
+    const prev = document.getElementById('collab-prev');
+    const next = document.getElementById('collab-next');
+    let idx = 0;
+    const cardWidth = 252; // approx (card + gap)
+    function slide() {
+      track.style.transform = `translateX(${-idx * cardWidth}px)`;
+    }
+    prev.addEventListener('click', ()=> { idx = Math.max(0, idx-1); slide(); });
+    next.addEventListener('click', ()=> { idx = Math.min(Math.max(0, track.children.length - 3), idx+1); slide(); });
+  })();
+
+  /* ========= Awards modal (simple) ========= */
+  (function(){
+    document.querySelectorAll('.award').forEach(a=>{
+      a.addEventListener('click', ()=>{
+        const name = a.dataset.award || 'Award';
+        alert(name + "\\n\\n(Replace alert with modal containing award details in Phase-2)");
+      });
+    });
+  })();
+
+  /* ========= Lightbox for video gallery ========= */
+  (function(){
+    const lb = document.getElementById('lightbox');
+    const lbContent = document.getElementById('lightbox-content');
+    const closeBtn = document.querySelector('#lightbox-close button');
+    document.querySelectorAll('.video-thumb').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        const url = el.dataset.video;
+        if(!url) return;
+        // build embed iframe (Youtube)
+        const vidMatch = url.match(/[?&]v=([^&]+)/);
+        let iframeSrc = url;
+        if(vidMatch && vidMatch[1]) {
+          const id = vidMatch[1];
+          iframeSrc = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+        }
+        lbContent.innerHTML = '<iframe width="100%" height="520" src="'+iframeSrc+'" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
+        lb.classList.add('active');
+        lb.setAttribute('aria-hidden','false');
+      });
+    });
+    closeBtn.addEventListener('click', ()=> {
+      lb.classList.remove('active');
+      lb.setAttribute('aria-hidden','true');
+      lbContent.innerHTML = '';
+    });
+    // close on escape
+    document.addEventListener('keydown', (ev)=> { if(ev.key === 'Escape'){ lb.classList.remove('active'); lbContent.innerHTML = ''; }});
+  })();
+
+  /* ========= Hero CTA quick scroll ========= */
+  (function(){
+    document.getElementById('btn-tour').addEventListener('click', ()=> {
+      document.getElementById('timeline-title').scrollIntoView({behavior:'smooth', block:'start'});
+    });
+    document.getElementById('btn-watch').addEventListener('click', ()=> {
+      document.getElementById('performances-title').scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  })();
+
+  /* ========= Voice snippet placeholder (play dummy) ========= */
+  (function(){
+    document.querySelectorAll('[data-sample]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const sample = btn.dataset.sample;
+        alert('Voice snippet clicking demo — replace with audio player and proper file at: ' + sample);
+      });
+    });
+  })();
+
+  /* ========= Small accessibility improvements ========= */
+  (function(){
+    // focus outlines for keyboard users
+    document.body.addEventListener('keyup', (e)=> {
+      if(e.key === 'Tab') document.documentElement.classList.add('show-focus');
+    });
+  })();
+  </script>
+  <script src="playerManager.js"></script>
+
+</body>
+</html>
