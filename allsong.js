@@ -13,7 +13,7 @@ const AllSONGS = [
   { id:9, title:'Jaani Door Gaye', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/movie.mp4', cover:'asset/janidoorgaye.jpg', tags:['sufi','love','legendary'], plays: 45211, added:'2018-06-09' },
   { id:10, title:'Tum Ek Gorakh Dhanda Ho', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/mov_bbb.mp4', cover:'asset/TumEkGorakh.jpg', tags:['sufi','celebration','power','legendary'], plays: 78020, added:'2019-10-11' },
   { id:11, title:'Iss Karam Ka Karu Shukr Kese Ada', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/mov_bbb.mp4', cover:'asset/isskaramka.jpg', tags:['sufi','celebration','legendary'], plays: 78020, added:'2019-10-11' },
-  { id:12, title:'Allah Hoo', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/mov_bbb.mp4', cover:'asset/allahhoo.jpg', tags:['sufi','devotional'], plays: 78020, added:'2019-10-11' },
+   { id:12, title:'Allah Hoo', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/mov_bbb.mp4', cover:'asset/allahhoo.jpg', tags:['sufi','devotional'], plays: 78020, added:'2019-10-11' },
   { id:13, title:'Shah-e-Mardan-e-Ali', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/mov_bbb.mp4', cover:'asset/shahemardan.jpg', tags:['sufi','power'], plays: 78020, added:'2019-10-11' },
   { id:14, title:'Akhiyan Udeek Diyan', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/mov_bbb.mp4', cover:'lega/perform.jpg', tags:['love','celebration'], plays: 78020, added:'2019-10-11' },
   

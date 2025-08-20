@@ -60,7 +60,7 @@
     /* search bar */
     .search-row{ display:flex; color: yellow;gap:12px; align-items:center; justify-content:center; margin-top:8px; flex-wrap:wrap }
     .search-input{
-      background:rgba(39, 85, 236, 0.02); border:1px solid rgb(171, 223, 74);
+      background:rgba(39, 85, 236, 0.02); border:1px solid rgb(244, 245, 241);
       padding:12px 14px; border-radius:10px; color:inherit; width:420px; max-width:92%;
       outline:none; transition: box-shadow .16s;
     }
@@ -103,10 +103,10 @@
       position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.75); z-index:1700; padding:20px;
     }
     .modal.active{ display:flex }
-    .modal-inner{ width:100%; max-width:720px; background:#0d0c0c; border-radius:12px; padding:18px; border:1px solid rgba(255,255,255,0.03) }
+    .modal-inner{ width:100%; max-width:720px; background:#0d0c0c; border-radius:12px; padding:18px; border:1px solid rgba(247, 241, 241, 0.03) }
     .modal-inner h3{ color:var(--gold); margin-bottom:8px }
     .modal-list{ margin-top:12px; display:flex; flex-direction:column; gap:10px }
-    .song-row{ display:flex; gap:12px; align-items:center; padding:10px; background:rgba(255,255,255,0.01); border-radius:8px; border:1px solid rgba(255,255,255,0.02) }
+    .song-row{ display:flex; gap:12px; align-items:center; padding:10px; background:rgba(255,255,255,0.01); border-radius:8px; border:1px solid rgba(247, 237, 237, 0.02) }
     .song-row .title{ font-weight:700 }
     .song-row .meta{ color:var(--muted); font-size:0.95rem }
 
@@ -168,7 +168,7 @@
         <div class="fm-thumb" id="fm-thumb">M</div>
         <div class="fm-meta">
           <div class="mood" id="fm-mood">Mood Name</div>
-          <div class="fm-song" id="fm-song">Featured track title (placeholder)</div>
+          <div class="fm-song" id="fm-song">Featured track title </div>
         </div>
       </div>
       <div>
@@ -184,7 +184,7 @@
     </section>
 
     <!-- small note -->
-    <div style="margin-top:18px;color:var(--muted);font-size:0.95rem">Tip: type to filter moods or a song title. Click a mood to open its playlist (placeholder content).</div>
+    <div style="margin-top:18px;color:var(--muted);font-size:0.95rem">Tip: type to filter moods or a song title. Click a mood to open its playlist.</div>
 
   </main>
 
@@ -290,27 +290,35 @@
     if(featured) goToPlaylist(featured.id);
   });
 
-  /* ===== search filter ===== */
-  const searchInput = $('#search');
-  const clearBtn = $('#clear-search');
-  function filterMoods(q){
-    const term = (q||'').trim().toLowerCase();
-    if(!term) return MOODS;
-    return MOODS.filter(m => {
-      if(m.title.toLowerCase().includes(term)) return true;
-      if(m.desc && m.desc.toLowerCase().includes(term)) return true;
-      if(m.songs && m.songs.some(s => s.title.toLowerCase().includes(term))) return true;
-      return false;
-    });
-  }
-  searchInput.addEventListener('input', (e)=>{
-    const filtered = filterMoods(e.target.value);
-    renderMoods(filtered);
+  // ===== Search Filter =====
+const searchInput = document.getElementById('search');
+const clearBtn = document.getElementById('clear-search');
+
+// Function to filter moods based on search
+function filterMoods(q) {
+  const term = (q || '').trim().toLowerCase();
+  if (!term) return MOODS;
+
+  return MOODS.filter(m => {
+    if (m.title && m.title.toLowerCase().includes(term)) return true;
+    if (m.desc && m.desc.toLowerCase().includes(term)) return true;
+    if (m.songs && Array.isArray(m.songs) && m.songs.some(s => s.title && s.title.toLowerCase().includes(term))) return true;
+    return false;
   });
-  clearBtn.addEventListener('click', ()=>{
-    searchInput.value = '';
-    renderMoods(MOODS);
-  });
+}
+
+
+// Listen for typing in search input
+searchInput.addEventListener('input', (e) => {
+  const filtered = filterMoods(e.target.value);
+  renderMoods(filtered); // Refresh UI with filtered moods
+});
+
+// Clear search functionality
+clearBtn.addEventListener('click', () => {
+  searchInput.value = '';
+  renderMoods(MOODS);
+});
 
   //* ===== navigation to playlist page ===== */
 function goToPlaylist(id) {
