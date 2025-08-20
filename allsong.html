@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>NusratNama — All Songs</title>
+<title>NusratNama | All Songs</title>
 <style>
   /* ===== RESET / THEME ===== */
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -75,7 +75,7 @@
   .pager { display:flex; justify-content:center; margin:18px 0 8px; }
   .hidden { display:none !important; }
 
-  /* ===== MINI PLAYER (bottom-right) ===== */
+  /* ===== MINI PLAYER (styles kept but component disabled) ===== */
   .mini { position:fixed; right:22px; bottom:22px; width:360px; max-width:90vw; background:#111; border:1px solid rgba(212,175,55,0.12); border-radius:14px; box-shadow:0 12px 40px rgba(0,0,0,.45); z-index:1400; overflow:hidden; transform:translateY(20px); opacity:0; pointer-events:none; transition:transform .28s ease, opacity .28s ease; }
   .mini.active { transform:translateY(0); opacity:1; pointer-events:auto; }
   .mini-head { display:flex; gap:10px; align-items:center; padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.06); }
@@ -96,7 +96,7 @@
   /* ===== UTIL ===== */
   .fade-in { animation:fade .5s ease; }
   @keyframes fade { from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none} }
-</style>
+</style><link rel="icon" type="image/png" href="1000045731.png">
 </head>
 <body>
 
@@ -148,7 +148,7 @@
     </section>
   </main>
 
-  <!-- ===== MINI PLAYER (sticky bottom-right) ===== -->
+  <!-- ===== MINI PLAYER (kept hidden; not used) ===== -->
   <div id="mini" class="mini" aria-live="polite">
     <div class="mini-head">
       <img id="miniThumb" class="mini-thumb" alt="cover" src="" />
@@ -170,20 +170,11 @@
       <button id="btnOpenPlayer" class="btn" title="Open player page">Open</button>
     </div>
   </div>
-
+<script src="allsong.js"></script>
 <script>
 /***** DATA *****/
 // Tip: move to songs.js later and import. For now, inline demo.
-const SONGS = [
-  { id:1, title:'Afreen Afreen', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/mov_bbb.mp4', cover:'https://placehold.co/600x320/1b1a19/efeae1?text=Afreen+Afreen', tags:['love','legendary'], plays: 15234, added:'2024-09-03' },
-  { id:2, title:'Tajdar-e-Haram (Live)', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/movie.mp4', cover:'https://placehold.co/600x320/1b1a19/efeae1?text=Tajdar-e-Haram', tags:['spiritual','live'], plays: 20291, added:'2023-12-10' },
-  { id:3, title:'Ye Jo Halka Halka Suroor Hai', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/mov_bbb.mp4', cover:'https://placehold.co/600x320/1b1a19/efeae1?text=Halka+Halka+Suroor', tags:['love','sufi'], plays: 51290, added:'2022-05-14' },
-  { id:4, title:'Sanson Ki Mala Pe', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/movie.mp4', cover:'https://placehold.co/600x320/1b1a19/efeae1?text=Sanson+Ki+Mala', tags:['spiritual','devotional'], plays: 34100, added:'2021-02-18' },
-  { id:5, title:'Dum Mast Qalandar', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/mov_bbb.mp4', cover:'https://placehold.co/600x320/1b1a19/efeae1?text=Dum+Mast+Qalandar', tags:['sufi','celebration'], plays: 78020, added:'2019-10-11' },
-  { id:6, title:'Mera Piya Ghar Aya', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/movie.mp4', cover:'https://placehold.co/600x320/1b1a19/efeae1?text=Mera+Piya+Ghar+Aaya', tags:['celebration','legendary'], plays: 26340, added:'2020-08-01' },
-  { id:7, title:'Kinna Sona Tenu', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/mov_bbb.mp4', cover:'https://placehold.co/600x320/1b1a19/efeae1?text=Kinna+Sona+Tenu', tags:['love'], plays: 11800, added:'2024-01-20' },
-  { id:8, title:'Man Kunto Maula', artist:'Nusrat Fateh Ali Khan', file:'https://www.w3schools.com/html/movie.mp4', cover:'https://placehold.co/600x320/1b1a19/efeae1?text=Man+Kunto+Maula', tags:['sufi','live'], plays: 45210, added:'2018-06-09' }
-];
+
 
 const PLAYLISTS = [
   { id:'pl-love', title:'Love Qawwalis', desc:'Ishq • Romance • Dil se', cover:'https://placehold.co/600x300/d4af37/080706?text=Love+Qawwalis', tags:['love'] },
@@ -199,7 +190,7 @@ let state = {
   sort: 'popular',
   page: 1,
   pageSize: 8, // increase to simulate infinite
-  filtered: [...SONGS],
+  filtered: [...AllSONGS],
   currentIndex: -1
 };
 
@@ -211,21 +202,6 @@ const elTag = document.getElementById('filterTag');
 const elSort = document.getElementById('sortBy');
 const elReset = document.getElementById('reset');
 const strip = document.getElementById('playlistStrip');
-
-// mini player elements
-const mini = document.getElementById('mini');
-const v = document.getElementById('miniVideo');
-const miniT = document.getElementById('miniT');
-const miniA = document.getElementById('miniA');
-const miniThumb = document.getElementById('miniThumb');
-const btnPrev = document.getElementById('btnPrev');
-const btnPlay = document.getElementById('btnPlay');
-const btnNext = document.getElementById('btnNext');
-const btnCloseMini = document.getElementById('btnCloseMini');
-const btnOpenPlayer = document.getElementById('btnOpenPlayer');
-const bar = document.getElementById('bar');
-const barP = document.getElementById('barP');
-const vol = document.getElementById('vol');
 
 /***** RENDER: PLAYLIST STRIP *****/
 function renderPlaylists(){
@@ -243,7 +219,6 @@ function renderPlaylists(){
     card.addEventListener('click', ()=>{
       elTag.value = '';
       state.tag = '';
-      // Filter by playlist tags
       state.query = '';
       elSearch.value = '';
       filterAndRender({ playlistTags: pl.tags });
@@ -272,8 +247,32 @@ function filterSongs(list, {playlistTags}={}){
 
 function filterAndRender(opts={}){
   state.page = 1;
-  state.filtered = filterSongs(SONGS, opts);
+  state.filtered = filterSongs(AllSONGS, opts);
   renderSongs();
+}
+
+/***** SEND TO PLAYER VIA LOCALSTORAGE *****/
+function openPlayerWithSong(song){
+  // Prepare the payload that player.html expects
+  const payload = [{
+    id: song.id,
+    title: song.title,
+    file: song.file,
+    cover: song.cover,
+    tags: Array.isArray(song.tags) ? song.tags : [],
+    lyrics: song.lyrics || ''
+  }];
+
+  try {
+    localStorage.setItem('nn_songs', JSON.stringify(payload));
+    localStorage.setItem('nn_startIndex', '0');
+    localStorage.setItem('nn_source', 'allsongs'); // optional, for debugging/analytics
+  } catch(e) {
+    console.warn('localStorage unavailable', e);
+  }
+
+  // Open player page (query optional; kept for compatibility)
+  window.location.href = `player.html?id=${encodeURIComponent(song.id)}`;
 }
 
 /***** RENDER: SONG CARDS with pagination *****/
@@ -282,9 +281,7 @@ function renderSongs(){
   const end = state.page * state.pageSize;
   const slice = state.filtered.slice(0, end);
   slice.forEach((song, idx)=> elGrid.appendChild(makeSongCard(song, idx)) );
-  // pager
-  if(end < state.filtered.length){ elLoad.classList.remove('hidden'); }
-  else { elLoad.classList.add('hidden'); }
+ 
 }
 
 function makeSongCard(song, idx){
@@ -302,76 +299,24 @@ function makeSongCard(song, idx){
       <button class="icon-btn more" title="More">⋯</button>
     </div>
   `;
-  // Play from card
-  card.querySelector('.icon-btn').addEventListener('click', (e)=>{ e.stopPropagation(); playSongById(song.id); });
-  // Whole card also plays
-  card.addEventListener('click', ()=> playSongById(song.id));
-  // 3-dot menu -> open player page
+
+  // Play button -> send single song to player
+  card.querySelector('.icon-btn').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    openPlayerWithSong(song);
+  });
+
+  // Whole card click -> same behavior
+  card.addEventListener('click', ()=> openPlayerWithSong(song));
+
+  // 3-dot menu -> also open player with this song (kept same UX shortcut)
   card.querySelector('.more').addEventListener('click', (e)=>{
     e.stopPropagation();
-    openPlayerPage(song.id);
+    openPlayerWithSong(song);
   });
+
   return card;
 }
-
-/***** PLAYER PAGE NAV *****/
-function openPlayerPage(id){
-  // Navigate to dedicated player page with query string
-  window.location.href = `player.html?id=${encodeURIComponent(id)}`;
-}
-
-/***** MINI PLAYER LOGIC *****/
-function playSongById(id){
-  const list = state.filtered.length ? state.filtered : SONGS;
-  const idx = list.findIndex(s=> s.id===id);
-  if(idx===-1) return;
-  state.currentIndex = idx;
-  const s = list[idx];
-  miniThumb.src = s.cover; miniT.textContent = s.title; miniA.textContent = s.artist;
-  v.src = s.file; // HTML5 video
-  v.play().catch(()=>{/* autoplay might fail until user gesture; but click triggers play */});
-  ensureMini(true);
-}
-
-function ensureMini(on){
-  if(on){ mini.classList.add('active'); }
-  else { mini.classList.remove('active'); v.pause(); v.removeAttribute('src'); v.load(); }
-}
-
-btnCloseMini.addEventListener('click', ()=> ensureMini(false));
-btnPlay.addEventListener('click', ()=>{ if(v.paused){ v.play(); } else { v.pause(); } });
-btnPrev.addEventListener('click', ()=> step(-1));
-btnNext.addEventListener('click', ()=> step(1));
-btnOpenPlayer.addEventListener('click', ()=>{
-  const cur = getCurrentSong(); if(cur) openPlayerPage(cur.id);
-});
-
-function getCurrentSong(){
-  const list = state.filtered.length ? state.filtered : SONGS;
-  if(state.currentIndex<0 || state.currentIndex>=list.length) return null;
-  return list[state.currentIndex];
-}
-
-function step(delta){
-  const list = state.filtered.length ? state.filtered : SONGS;
-  if(!list.length) return;
-  let i = state.currentIndex + delta;
-  if(i<0) i = 0; if(i>=list.length) i = list.length-1;
-  playSongById(list[i].id);
-}
-
-// progress & seek
-v.addEventListener('timeupdate', ()=>{
-  if(!isFinite(v.duration) || v.duration===0) return;
-  barP.style.width = (v.currentTime / v.duration * 100) + '%';
-});
-bar.addEventListener('click', (e)=>{
-  if(!isFinite(v.duration) || v.duration===0) return;
-  const r = bar.getBoundingClientRect();
-  const ratio = (e.clientX - r.left) / r.width;
-  v.currentTime = ratio * v.duration;
-});
-vol.addEventListener('input', ()=> v.volume = +vol.value);
 
 /***** EVENTS: CONTROLS *****/
 elSearch.addEventListener('input', ()=>{ state.query = elSearch.value; filterAndRender(); });
@@ -383,7 +328,21 @@ elLoad.addEventListener('click', ()=>{ state.page++; renderSongs(); });
 /***** INIT *****/
 renderPlaylists();
 filterAndRender();
+window.addEventListener('scroll', () => {
+  // Check if user is near the bottom
+  const scrollPosition = window.scrollY + window.innerHeight;
+  const threshold = document.body.offsetHeight - 200; // 200px from bottom
+  if(scrollPosition >= threshold){
+    const end = state.page * state.pageSize;
+    if(end < state.filtered.length){
+      state.page++;
+      renderSongs();
+    }
+  }
+});
+
 </script>
+<!-- If playerManager.js manipulates mini-player on this page, it should be safe since #mini stays hidden and unused -->
 <script src="playerManager.js"></script>
 
 </body>

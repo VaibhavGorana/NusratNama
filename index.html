@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>NusratNama — Home</title>
+  <title>NusratNama | Home</title>
 
   <!-- Minimal fonts: keep serif for headings -->
   <style>
@@ -224,6 +224,8 @@
     .song-thumb{ width:100%; height:160px }
   }
   </style>
+  <link rel="icon" type="image/png" href="1000045731.png">
+
 </head>
 <body>
 
@@ -256,14 +258,14 @@
         <span class="triangle" aria-hidden="true"></span>
       </div>
 
-      <div class="hero-meta">Press the golden button to begin — audio sample will play (demo)</div>
+      <div class="hero-meta">Press the golden button to begin — a soulful song will play</div>
     </div>
   </section>
 
   <!-- ROTATING QUOTE STRIP -->
   <div class="quote-strip" id="quote-strip" role="region" aria-live="polite">
-    “Music knows no boundaries”
-    <span class="ur">"ساز کی کوئی سرحد نہیں ہوتی"</span>
+    “I am not a Sufi, but I follow the Sufi.”
+    <span class="ur">"میں صوفی نہیں ہوں، لیکن میں صوفی کی پیروی کرتا ہوں"</span>
   </div>
 
   <!-- MAIN CONTENT -->
@@ -275,13 +277,13 @@
       <div class="song-cards">
 
         <!-- Local audio card 1 -->
-        <article class="song-card" data-audio="songs/gorakh.mp3" >
-          <div class="song-thumb" style="background-image:url('assets/images/gorakh-thumb.jpg');"></div>
+        <article class="song-card" data-id="10" data-audio="songs/gorakh.mp3" >
+          <div class="song-thumb" style="background-image:url('asset/TumEkGorakh.jpg');"></div>
           <div class="song-info">
             <h4>Tum Ek Gorakh Dhanda Ho</h4>
             <p>Live qawwali — soulful exploration of divine paradox. (Live: 1992)</p>
             <div class="song-controls">
-              <button class="btn-play">Play</button>
+              <button type="button" class="btn-play">Play</button>
               <div style="flex:1">
                 <div class="progress"><i style="width:0%"></i></div>
               </div>
@@ -290,8 +292,8 @@
         </article>
 
         <!-- Local audio card 2 -->
-        <article class="song-card" data-audio="songs/halka.mp3">
-          <div class="song-thumb" style="background-image:url('assets/images/halka-thumb.jpg');"></div>
+        <article class="song-card" data-id="3" data-audio="songs/halka.mp3">
+          <div class="song-thumb" style="background-image:url('asset/yehjohalka.jpg');"></div>
           <div class="song-info">
             <h4>Yeh Jo Halka Halka Suroor</h4>
             <p>A famous piece often sung in mehfils; known for its gentle intoxication of the heart.</p>
@@ -304,12 +306,12 @@
           </div>
         </article>
 
-        <!-- YouTube embed example (replace VIDEO_ID with actual nusrat id) -->
-        <article class="song-card" data-youtube="VIDEO_ID_HERE" data-sample="songs/gorakh.mp3">
-          <div class="song-thumb" style="background-image:url('assets/images/yt-thumb.jpg');"></div>
+         <!-- Local audio card 3 -->
+        <article class="song-card" data-id="11" data-audio="songs/halka.mp3">
+          <div class="song-thumb" style="background-image:url('asset/isskaramka.jpg');"></div>
           <div class="song-info">
-            <h4>Tajdar-e-Haram (YouTube)</h4>
-            <p>Official upload (if embeddable) — will play via YouTube embed, or fall back to a local sample.</p>
+            <h4>Iss Karam Ka Karu Shukr Kese Ada</h4>
+            <p>A famous piece often sung in mehfils; known for its gentle intoxication of the heart.</p>
             <div class="song-controls">
               <button class="btn-play">Play</button>
               <div style="flex:1">
@@ -319,6 +321,7 @@
           </div>
         </article>
 
+
       </div>
     </section>
 
@@ -326,10 +329,10 @@
     <section id="discover" class="fade-section" style="margin-top:32px">
       <div class="section-title">Discover More</div>
       <div class="moods">
-        <div class="mood-card">Ishq (Love)</div>
-        <div class="mood-card">Ruhani (Devotion)</div>
-        <div class="mood-card">Mehfil (Live)</div>
-        <div class="mood-card">Romantic</div>
+        <div class="mood-card" data-tag="1">Ishq (Love)</div>
+        <div class="mood-card" data-tag="2">Ruhani (Devotion)</div>
+        <div class="mood-card" data-tag="3">Mehfil (Live)</div>
+        <div class="mood-card" data-tag="1">Romaani (Romantic)</div>
       </div>
     </section>
 
@@ -337,35 +340,23 @@
     <section id="legacy" class="fade-section" style="margin-top:32px">
       <div class="section-title">Legacy of Nusrat</div>
       <div class="legacy">
-        <img src="assets/images/nusrat-portrait.jpg" alt="Nusrat portrait">
+        <img src="1000045731.png" alt="Nusrat portrait">
         <div>
           <p style="color:var(--muted)">Ustad Nusrat Fateh Ali Khan's voice transcended musical boundaries. This project is a curated tribute — a starting point for listeners and seekers.</p>
-          <a class="cta-join" href="#contact">Join the Journey</a>
+          <a class="cta-join" href="join.html">Join the Journey</a>
         </div>
       </div>
     </section>
 
   </main>
 
-  <!-- STICKY MINI PLAYER (shows currently playing local audio) -->
-  <div id="mini-player" style="position:fixed;left:12px;right:12px;bottom:16px;background:linear-gradient(180deg,rgba(0,0,0,0.6),rgba(0,0,0,0.4));padding:10px 14px;border-radius:10px;display:none;align-items:center;gap:12px;z-index:1500">
-    <div id="mini-title" style="flex:1;color:var(--muted)">Nothing playing</div>
-    <button id="mini-toggle" class="btn-play" style="padding:8px 10px">Play</button>
-    <div style="width:200px"><div class="progress"><i style="width:0%"></i></div></div>
-  </div>
-
-  <!-- Hidden audio element used as the main local player -->
-  <audio id="main-audio" preload="metadata"></audio>
-
-  <!-- Hidden div for YouTube player -->
-  <div id="yt-player" style="position:absolute;left:-9999px;top:-9999px;width:0;height:0" aria-hidden="true"></div>
-
+  
   <!-- FOOTER -->
   <footer id="contact">
     <div style="max-width:960px;margin:0 auto">
       <div style="font-weight:700;color:var(--gold);margin-bottom:6px">NusratNama</div>
       <div style="color:var(--muted);font-size:0.95rem">A soulful tribute by Vaibhav Gorana — © 2025 NusratNama</div>
-
+      <div>Disclaimer: The website only host the videos via links . No copyrighted content uploaded . </div>
       <div class="socials" aria-hidden="false" style="margin-top:12px">
         <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">YouTube</a>
         <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
@@ -373,9 +364,18 @@
       </div>
     </div>
   </footer>
-
+<script src="allsong.js"></script>
   <!-- ===== SCRIPTS ===== -->
   <script>
+
+
+    document.querySelectorAll('.mood-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const tag = card.dataset.tag;
+      // Redirect to playlist.html with mood filter
+      window.location.href = `playlist.html?id=${tag}`;
+    });
+  });
   /* ---------- Helper: smooth fade-up when section enters viewport ---------- */
   (function(){
     const io = new IntersectionObserver(entries => {
@@ -444,177 +444,54 @@
   })();
 
   /* ---------- HERO play toggle (local audio) ---------- */
-  (function(){
-    const heroBtn = document.getElementById('hero-play');
-    const heroAudio = document.getElementById('hero-audio');
-    const mini = document.getElementById('mini-player');
-    const miniTitle = document.getElementById('mini-title');
-    const miniToggle = document.getElementById('mini-toggle');
-    const mainAudio = document.getElementById('main-audio');
+  (function() {
+  const heroBtn = document.getElementById('hero-play');
 
-    function showMini(title){
-      mini.style.display = 'flex';
-      miniTitle.textContent = title || 'Now playing';
-    }
+  heroBtn.addEventListener('click', () => {
+    if (!AllSONGS || !AllSONGS.length) return alert('No songs loaded!');
 
-    heroBtn.addEventListener('click', async ()=>{
-      // stop youtube player if active (we'll handle below)
-      if(window.YT && window.ytPlayer && typeof window.ytPlayer.stopVideo === 'function'){ try{ window.ytPlayer.stopVideo() }catch(e){} }
-      // if hero audio is already set to main-audio, reuse
-      if(!heroAudio.src){ alert('Hero sample missing: add songs/gorakh.mp3 in songs/'); return; }
-      // transfer src to main-audio so progress/properties shared
-      mainAudio.src = heroAudio.src;
-      try{
-        await mainAudio.play();
-        showMini('Signature Qawwali — sample');
-        miniToggle.textContent = 'Pause';
-      }catch(err){
-        console.warn('Autoplay blocked, user gesture required');
-      }
+    // Filter only qawwalis (or soulful songs) if you want by tag
+    const qawwalis = AllSONGS.filter(s => s.tags.includes('sufi') || s.tags.includes('devotional') || s.tags.includes('love'));
+    
+    // Pick random song
+    const randomSong = qawwalis[Math.floor(Math.random() * qawwalis.length)];
+
+    // Save to localStorage like song cards
+    localStorage.setItem('nn_songs', JSON.stringify([randomSong]));
+    localStorage.setItem('currentIndex', 0);
+
+    // Redirect to player.html
+    window.location.href = `player.html?id=${randomSong.id}`;
+  });
+})();
+
+  
+
+  /* ---------- FEATURED SONG CARDS logic (redirect to player.html) ---------- */
+(function(){
+  const cards = document.querySelectorAll('.song-card');
+
+  cards.forEach((card, index) => {
+    const btn = card.querySelector('.btn-play');
+    btn.addEventListener('click', () => {
+      
+      const songId = Number(card.dataset.id); // use the new data-id
+
+    // Redirect to player with the song ID
+    window.location.href = `player.html?id=${songId}`;
     });
+  });
+})();
 
-    miniToggle.addEventListener('click', ()=>{
-      if(mainAudio.paused){ mainAudio.play(); miniToggle.textContent='Pause' } else { mainAudio.pause(); miniToggle.textContent='Play' }
-    });
-
-    /* progress update for mini player */
-    const miniProg = mini.querySelector('.progress > i');
-    mainAudio.addEventListener('timeupdate', ()=> {
-      const pct = (mainAudio.currentTime / (mainAudio.duration || 1)) * 100;
-      miniProg.style.width = pct + '%';
-    });
-    mainAudio.addEventListener('ended', ()=> miniToggle.textContent='Play');
-  })();
-
-  /* ---------- FEATURED SONG CARDS logic (local audio and YouTube fallback) ---------- */
-  (function(){
-    const mainAudio = document.getElementById('main-audio');
-    const cards = document.querySelectorAll('.song-card');
-    let activeCard = null;
-
-    // YouTube: load iframe API only when needed
-    let ytReady = false;
-    function loadYT(cb){
-      if(window.YT && window.YT.Player){ ytReady=true; cb && cb(); return; }
-      const s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api';
-      document.head.appendChild(s);
-      window.onYouTubeIframeAPIReady = function(){ ytReady = true; cb && cb(); }
-    }
-
-    // create hidden player container
-    const ytContainer = document.getElementById('yt-player');
-
-    // helper: stop any YT
-    function stopYT(){ if(window.ytPlayer && window.ytPlayer.stopVideo) try{ window.ytPlayer.stopVideo() }catch(e){} }
-
-    cards.forEach(card => {
-      const btn = card.querySelector('.btn-play');
-      const progEl = card.querySelector('.progress > i');
-
-      btn.addEventListener('click', async (e) => {
-        const audioSrc = card.dataset.audio;
-        const ytId = card.dataset.youtube;
-        const sample = card.dataset.sample;
-
-        // if currently there is another active card, reset its button & progress if different
-        if(activeCard && activeCard !== card){
-          const prevBtn = activeCard.querySelector('.btn-play');
-          prevBtn.textContent = 'Play';
-        }
-
-        // If card is local audio
-        if(audioSrc){
-          stopYT();
-          if(mainAudio.src !== audioSrc){
-            mainAudio.src = audioSrc;
-          }
-          if(mainAudio.paused){
-            try{ await mainAudio.play(); btn.textContent = 'Pause'; activate(card); }catch(e){ console.warn('play blocked') }
-          } else {
-            mainAudio.pause(); btn.textContent = 'Play'; deactivate(card);
-          }
-          // update progress bar
-          const update = ()=> {
-            const pct = (mainAudio.currentTime / (mainAudio.duration || 1)) * 100;
-            progEl.style.width = pct + '%';
-            if(mainAudio.paused) return;
-            requestAnimationFrame(update);
-          }
-          requestAnimationFrame(update);
-        }
-        // If card wants YouTube
-        else if(ytId){
-          // clear mainAudio
-          try{ mainAudio.pause(); }catch(e){}
-          loadYT(() => {
-            // if new YT player or existing with different id, load it
-            if(!window.ytPlayer){
-              window.ytPlayer = new YT.Player('yt-player', {
-                height: '0', width: '0',
-                videoId: ytId,
-                playerVars: { controls:0, modestbranding:1, rel:0, fs:0 },
-                events: {
-                  onReady: (ev)=>{
-                    try{ ev.target.playVideo(); btn.textContent='Pause'; activate(card); }
-                    catch(e){ console.warn(e) }
-                  },
-                  onStateChange: (ev)=>{
-                    if(ev.data === YT.PlayerState.ENDED){ btn.textContent='Play'; deactivate(card); }
-                  },
-                  onError: (ev)=>{
-                    console.warn('YT error', ev.data);
-                    // attempt fallback: if data-sample present, play that
-                    if(sample){
-                      mainAudio.src = sample;
-                      mainAudio.play().then(()=>{ btn.textContent='Pause'; activate(card); })
-                    } else {
-                      alert('This video cannot be embedded — opening on YouTube.');
-                      window.open('https://www.youtube.com/watch?v=' + ytId, '_blank');
-                    }
-                  }
-                }
-              });
-            } else {
-              // existing player: load by id then play
-              try{
-                window.ytPlayer.loadVideoById(ytId);
-                btn.textContent='Pause'; activate(card);
-              }catch(e){
-                console.warn(e);
-              }
-            }
-          });
-        }
-      });
-    });
-
-    function activate(card){ activeCard = card; const b = card.querySelector('.btn-play'); b.textContent='Pause' }
-    function deactivate(card){ if(activeCard===card) activeCard=null; const b = card.querySelector('.btn-play'); b.textContent='Play' }
-
-    // pause main-audio when user clicks elsewhere or navigates
-    document.addEventListener('visibilitychange', ()=>{ if(document.hidden) try{ mainAudio.pause(); }catch(e){} });
-    // ensure mainAudio updates card progress
-    mainAudio.addEventListener('timeupdate', ()=>{
-      const playingCard = [...cards].find(c=> c.dataset.audio === mainAudio.src);
-      if(playingCard){
-        const el = playingCard.querySelector('.progress > i');
-        el.style.width = (mainAudio.currentTime / (mainAudio.duration || 1) * 100) + '%';
-      }
-      // update mini-player if open
-      const mini = document.getElementById('mini-player');
-      if(mini.style.display !== 'none'){
-        const miniProg = mini.querySelector('.progress > i');
-        miniProg.style.width = (mainAudio.currentTime / (mainAudio.duration || 1) * 100) + '%';
-      }
-    });
-  })();
+   
 
   /* ---------- Rotating quotes ---------- */
   (function(){
     const quotes = [
-      {en:"Music knows no boundaries", ur:"ساز کی کوئی سرحد نہیں ہوتی"},
-      {en:"The voice of the soul", ur:"روح کی آواز"},
-      {en:"A legend beyond time", ur:"وقت سے پرے ایک عظیم شخصیت"}
+      {en:"I am not a Sufi, but I follow the Sufi.", ur:"میں صوفی نہیں ہوں، لیکن میں صوفی کی پیروی کرتا ہوں۔"},
+      {en:"A man learns all his life, and dies the day he thinks that he has learnt everything.", ur:"انسان ساری زندگی سیکھتا رہتا ہے، اور وہ اس دن مر جاتا ہے جب وہ سمجھتا ہے کہ اس نے سب کچھ سیکھ لیا ہے۔"},
+      {en:"You've got to sing from depths of the heart . Without heart ,you cannot be a Qawwal.", ur:"«باید از عمق دل بخوانی. بدون دل، نمی‌توانی قوال باشی.»"},
+      {en:"Your Love is all I need to feel complete ", ur:"ਮੈਨੂੰ ਪੂਰਾ ਮਹਿਸੂਸ ਕਰਨ ਲਈ ਸਿਰਫ਼ ਤੁਹਾਡਾ ਪਿਆਰ ਹੀ ਚਾਹੀਦਾ ਹੈ।"}   
     ];
     const el = document.getElementById('quote-strip');
     let i = 0;

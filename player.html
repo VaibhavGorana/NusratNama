@@ -1,242 +1,576 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>NusratNama — Player Test</title>
-<style>
-  :root{
-    --bg1:#0d0c0c; --bg2:#151515; --gold:#d4af37; --muted:#bfb7ac; --card:#111;
-    --gold-2:#b9982c; --shadow:rgba(0,0,0,.6);
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0; min-height:100vh; font-family: Georgia, "Times New Roman", serif;
-    background: radial-gradient(800px 500px at 10% 0%, rgba(212,175,55,0.04), transparent),
-                linear-gradient(180deg,var(--bg1),var(--bg2));
-    color:#efeae1; -webkit-font-smoothing:antialiased;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NusratNama | Player</title>
+  <style>
+    /* ================= RESET & THEME ================= */
+    * { box-sizing: border-box; margin:0; padding:0; }
+    html, body { height:100%; }
+    body {
+      font-family: Georgia, "Times New Roman", serif;
+      background: radial-gradient(1200px 800px at 20% -10%, rgba(212,175,55,0.08), transparent 45%) no-repeat,
+                  linear-gradient(180deg, #0d0c0c, #151515);
+      color:#efeae1;
+      line-height:1.55;
+    }
+    a { color: inherit; text-decoration: none; }
+    :root{
+      --gold:#d4af37; --gold-2:#b9982c; --ink:#080706; --muted:#bfb7ac; --card:#121212; --card-2:#1a1a1a;
+      --chip-love:#ff6b9a; --chip-love-bg:#d6336c33;
+      --chip-spiritual:#63e6be; --chip-spiritual-bg:#0ca67833;
+      --chip-live:#ff8787; --chip-live-bg:#e0313133;
+      --chip-legend:#ffd43b; --chip-legend-bg:#f59f0033;
+    }
 
-  header{
-    position:sticky; top:0; z-index:100; display:flex; justify-content:space-between;
-    align-items:center; padding:14px 22px; backdrop-filter: blur(6px);
-    background:linear-gradient(180deg, rgba(0,0,0,.6), rgba(0,0,0,.3));
-    border-bottom:1px solid rgba(212,175,55,.06);
-  }
-  .logo{ color:var(--gold); font-weight:700; font-size:1.15rem; }
+    /* ================= HEADER ================= */
+    header { position:sticky; top:0; z-index:1000; backdrop-filter: blur(6px);
+      background:linear-gradient(180deg, rgba(0,0,0,.75), rgba(0,0,0,.45)); border-bottom:1px solid rgba(212,175,55,0.08);
+      display:flex; align-items:center; justify-content:space-between; padding:14px 28px; }
+    .logo { font-weight:700; color:var(--gold); font-size:1.45rem; letter-spacing:.3px; }
+    nav { display:flex; gap:18px; }
+    nav a { padding:6px 8px; border-radius:8px; font-weight:600; opacity:.9; }
+    nav a[aria-current="page"], nav a:hover { color:var(--gold); opacity:1; }
 
-  main{ max-width:1100px; margin:28px auto; padding:12px; }
+    /* ================= LAYOUT ================= */
+    main { max-width:1200px; margin:0 auto; padding:24px 16px 120px; }
+    .grid { display:grid; grid-template-columns: 2fr 1fr; gap:22px; align-items:start; }
+    @media (max-width: 980px){ .grid { grid-template-columns: 1fr; } }
 
-  /* Rectangular player box (center) */
-  .player-card{
-    border-radius:14px; overflow:hidden; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
-    border:1px solid rgba(212,175,55,0.06); box-shadow:0 20px 60px var(--shadow); transition:transform .18s ease;
-  }
-  .player-card:hover{ transform:translateY(-6px) }
+    /* ================= PLAYER WRAPPER ================= */
+    .player-wrap { background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.15)); border:1px solid rgba(212,175,55,.08); border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.35); animation:fadeIn .5s ease; }
+    .player-top { position:relative; background:#000; }
+    .player-aspect { aspect-ratio:16/9; width:100%; background:#000; position:relative; }
+    video { width:100%; height:100%; display:block; background:#000; }
 
-  .player-top{ background:#000; position:relative; }
-  .player-rect{ width:100%; aspect-ratio:16/9; display:block; background:#000; }
+    .buffer-wrap { position:absolute; left:16px; right:16px; bottom:10px; height:6px; border-radius:6px; background:#2a2a2a; overflow:hidden; opacity:.9; }
+    .buffered { position:absolute; height:100%; left:0; width:0%; background:#777; opacity:.6; transition: width .15s linear; }
+    .played { position:absolute; height:100%; left:0; width:0%; background:var(--gold); transition: width .1s linear; }
 
-  /* controls */
-  .controls{ display:flex; align-items:center; gap:10px; padding:12px 14px; background:#0f0f0f; border-top:1px solid rgba(212,175,55,.04); }
-  .left{ display:flex; gap:8px; align-items:center; }
-  .btn{ border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700; background:var(--gold); color:#080706; }
-  .btn.ghost{ background:transparent; color:#efeae1; border:1px solid rgba(255,255,255,0.04) }
-  .time{ color:var(--muted); font-weight:700; min-width:110px; text-align:center }
+    .controls { display:flex; gap:10px; align-items:center; padding:12px 14px; background:#111; border-top:1px solid rgba(212,175,55,.08); }
+    .controls .left, .controls .right { display:flex; gap:8px; align-items:center; }
+    .btn { border:none; background:var(--gold); color:var(--ink); font-weight:700; border-radius:10px; padding:8px 12px; cursor:pointer; transition: transform .12s ease, background .2s ease; }
+    .btn:hover { background:var(--gold-2); transform: translateY(-1px); }
+    .btn.ghost { background:transparent; border:1px solid rgba(212,175,55,.25); color:#efeae1; }
+    .btn.ghost:hover { background:rgba(212,175,55,.12); }
+    .time { font-variant-numeric: tabular-nums; color:var(--muted); font-weight:700; min-width:102px; text-align:center; }
+    .seek { flex:1; height:8px; background:#2a2a2a; border-radius:6px; position:relative; cursor:pointer; }
+    .seek .bar { position:absolute; inset:0; }
 
-  .meta{ padding:14px; display:flex; flex-direction:column; gap:8px; }
-  .title{ color:var(--gold); font-weight:800; font-size:1.25rem}
-  .artist{ color:var(--muted) }
+    .range { appearance:none; width:110px; height:6px; background:#333; border-radius:999px; outline:none; }
+    .range::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:14px; height:14px; border-radius:50%; background:var(--gold); border:none; cursor:pointer; }
 
-  /* mini-player */
-  .mini{
-    position:fixed; right:18px; bottom:18px; width:320px; border-radius:12px; overflow:hidden;
-    background:#0f0f0f; border:1px solid rgba(212,175,55,.06); box-shadow:0 18px 60px var(--shadow); z-index:300;
-    display:none; transition:transform .22s ease, opacity .22s ease;
-  }
-  .mini.active{ display:flex; flex-direction:column; }
-  .mini video{ width:100%; height:160px; object-fit:cover; background:#000 }
-  .mini .mini-bar{ display:flex; align-items:center; gap:8px; padding:8px; justify-content:space-between; }
-  .mini-title{ color:var(--gold); font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; }
+    /* ================= META & LYRICS ================= */
+    .meta { padding:16px 16px 18px; display:flex; flex-direction:column; gap:10px; }
+    .title { font-size:1.45rem; font-weight:800; color:var(--gold); }
+    .artist { color:var(--muted); }
+    .chips { display:flex; flex-wrap:wrap; gap:8px; }
+    .chip { font-size:.85rem; font-weight:700; padding:4px 8px; border-radius:999px; }
+    .chip.love { background:var(--chip-love-bg); color:var(--chip-love); }
+    .chip.spiritual { background:var(--chip-spiritual-bg); color:var(--chip-spiritual); }
+    .chip.live { background:var(--chip-live-bg); color:var(--chip-live); }
+    .chip.legendary { background:var(--chip-legend-bg); color:var(--chip-legend); }
 
-  /* progress bar small */
-  .progress{ height:6px; background:#222; border-radius:6px; overflow:hidden; width:100% }
-  .progress > i{ display:block; height:100%; width:0%; background:var(--gold); transition:width .08s linear; }
+    .actions { display:flex; gap:10px; margin-top:6px; }
 
-  /* responsive */
-  @media (max-width:700px){
-    main{ margin:10px; }
-    .mini{ right:10px; bottom:10px; width:88vw; }
-  }
-</style>
+    .accordion { margin-top:10px; border-top:1px solid rgba(212,175,55,.08); }
+    .acc-head { display:flex; align-items:center; justify-content:space-between; cursor:pointer; padding:12px 8px; user-select:none; }
+    .acc-head h3 { font-size:1rem; font-weight:800; }
+    .acc-body { max-height:0; overflow:hidden; transition:max-height .35s ease; }
+    .lyrics { white-space:pre-wrap; padding:8px; color:#efeae1; line-height:1.7; }
+
+    /* ================= SIDEBAR ================= */
+    .side { position:sticky; top:76px; display:flex; flex-direction:column; gap:14px; }
+    .side h3 { color:var(--gold); font-size:1.05rem; }
+    .list { display:flex; flex-direction:column; gap:10px; }
+    .tile { display:grid; grid-template-columns: 120px 1fr; gap:10px; padding:10px; align-items:center; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.12)); border:1px solid rgba(212,175,55,.06); cursor:pointer; transition: transform .12s ease, box-shadow .12s ease; }
+    .tile:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(212,175,55,.1); }
+    .tile.active { outline:2px solid rgba(212,175,55,.35); }
+    .tile img { width:100%; height:68px; object-fit:cover; border-radius:8px; }
+    .tile .name { font-weight:800; color:#efeae1; }
+    .tile .sub { font-size:.9rem; color:var(--muted); }
+
+    /* ================= MINI PLAYER ================= */
+    .mini { position:fixed; right:18px; bottom:18px; width:340px; background:#111; border:1px solid rgba(212,175,55,.12); border-radius:16px; box-shadow:0 18px 60px rgba(0,0,0,.45); z-index:1500; overflow:hidden; display:none; }
+    .mini.active { display:block; animation:slideUp .28s ease; }
+    .mini video { width:100%; height:auto; display:block; background:#000; }
+    .mini .mini-bar { display:flex; justify-content:space-between; align-items:center; padding:8px 10px; gap:8px; }
+    .mini .mini-title { font-weight:800; color:var(--gold); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .mini .mini-controls { display:flex; gap:6px; }
+
+    /* ================= HELPERS ================= */
+    .sr { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .muted { color:var(--muted); }
+    .divider { height:1px; background:rgba(212,175,55,.08); margin:6px 0; }
+aside.side {
+  max-height: 500px;   /* fixed panel size */
+  overflow-y: auto;    /* scrollable */
+}
+
+#recoList .tile {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 6px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+#recoList .tile:hover { background: rgba(255,255,255,0.05); }
+#recoList .tile.active { background: rgba(255,255,255,0.15); }
+
+#recoList .thumb {
+  width: 60px;
+  height: 60px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 4px;
+}
+#recoList .info {
+  flex: 1;
+  color: #ddd;
+}
+#recoList .info .name { font-weight: 600; color: #fff; }
+#recoList .info .sub { font-size: 0.8em; color: #aaa; margin-top: 2px; }
+
+
+    @keyframes fadeIn { from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+    @keyframes slideUp { from{ transform: translateY(16px); opacity:0;} to{ transform: translateY(0); opacity:1;} }
+    
+  </style><link rel="icon" type="image/png" href="1000045731.png">
 </head>
 <body>
+  <header>
+    <div class="logo">NusratNama</div>
+    <nav>
+      <a href="index.html">Home</a>
+       <a href="allsong.html">All Songs</a>
+      <a href="legacy.html">Legacy</a>
+      <a href="discover.html">Discover</a>     
+      <a href="join.html">Join</a>
+      <a aria-current="page" href="player.html">Player</a>
+    </nav>
+  </header>
 
-<header>
-  <div class="logo">NusratNama</div>
-  <nav>
-    <a href="#" style="color:inherit;opacity:.9">Home</a>
-  </nav>
-</header>
+  <main>
+    <div class="grid">
+      <!-- ================= LEFT: PLAYER + META ================= -->
+      <section class="player-wrap" id="playerWrap">
+        <div class="player-top">
+          <div class="player-aspect" id="playerBox">
+            <video id="video" preload="metadata" playsinline></video>
+            <div class="buffer-wrap" aria-hidden="true">
+              <div class="buffered" id="buffered"></div>
+              <div class="played" id="played"></div>
+            </div>
+          </div>
+          <div class="controls" aria-label="Player Controls">
+            <div class="left">
+              <button class="btn" id="btnPlay" title="Play/Pause">▶️ / ⏸</button>
+              <button class="btn ghost" id="btnPrev" title="Previous">⏮</button>
+              <button class="btn ghost" id="btnNext" title="Next">⏭</button>
+              <span class="time" id="time">00:00 / 00:00</span>
+            </div>
+            <div class="seek" id="seek">
+              <div class="bar" id="seekBar"></div>
+            </div>
+            <div class="right">
+              <input type="range" class="range" id="vol" min="0" max="1" step="0.01" value="0.85" aria-label="Volume" />
+              <button class="btn ghost" id="btnMute" title="Mute">🔇</button>
+              <button class="btn ghost" id="btnFs" title="Fullscreen">⛶</button>
+              <button class="btn" id="btnMini" title="Minimize">▢</button>
+            </div>
+          </div>
+        </div>
 
-<main>
+        <div class="meta">
+          <div class="title" id="songTitle">—</div>
+          <div class="artist" id="songArtist">Nusrat Fateh Ali Khan</div>
+          <div class="chips" id="songTags"></div>
+          <div class="actions">
+            <button class="btn ghost" id="btnLike">👍 Like</button>
+            <button class="btn ghost" id="btnFav">🔖 Save</button>
+            <button class="btn ghost" id="btnAddPl">➕ Add to Playlist</button>
+          </div>
 
-  <!-- Player Card (rectangular box) -->
-  <div class="player-card" id="playerCard">
-    <div class="player-top">
-      <!-- video will be moved/used here -->
-      <video id="mainVideo" class="player-rect" playsinline preload="metadata"
-             src="https://archive.org/download/BigBuckBunny_328/BigBuckBunny_512kb.mp4"></video>
+          <div class="accordion" id="accLyrics">
+            <div class="acc-head" id="toggleLyrics">
+              <h3>Lyrics</h3>
+              <span id="lyrChevron">▾</span>
+            </div>
+            <div class="acc-body" id="lyricsBody">
+              <div class="lyrics" id="lyricsText">Lyrics not available for this track.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= RIGHT: RECOMMENDATIONS / PLAYLIST ================= -->
+      <aside class="side">
+        <h3 id="sideTitle">Up Next</h3>
+        <div class="list" id="recoList"></div>
+      </aside>
     </div>
+  </main>
 
-    <div class="controls">
-      <div class="left">
-        <button id="prevBtn" class="btn ghost">⏮</button>
-        <button id="playBtn" class="btn">▶ Play</button>
-        <button id="nextBtn" class="btn ghost">⏭</button>
-        <button id="miniBtn" class="btn ghost">Minimize</button>
+  <!-- ================= MINI PLAYER (GLOBAL) ================= -->
+  <div class="mini" id="mini">
+    <video id="miniVideo" playsinline></video>
+    <div class="mini-bar">
+      <div class="mini-title" id="miniTitle">—</div>
+      <div class="mini-controls">
+        <button class="btn ghost" id="miniPrev" title="Previous">⏮</button>
+        <button class="btn" id="miniPlay" title="Play/Pause">▶️ / ⏸</button>
+        <button class="btn ghost" id="miniNext" title="Next">⏭</button>
+        <button class="btn ghost" id="miniClose" title="Close">✖</button>
       </div>
-
-      <div style="flex:1"></div>
-
-      <div class="time" id="time">00:00 / 00:00</div>
-    </div>
-
-    <div class="meta">
-      <div class="title" id="title">Afreen Afreen (Test)</div>
-      <div class="artist" id="artist">Nusrat Fateh Ali Khan</div>
     </div>
   </div>
+<script src="allsong.js"> </script>
+<script src="playlist.js"> </script>
+  <script>
+    // ===================== DATA (NOW DYNAMIC) =====================
+    // Reads songs from localStorage key "nn_songs" and normalizes fields.
+    // If nothing valid is found, falls back to DEFAULT_SONGS (your original list).
+    function loadSongsFromLocalStorage(){
+      try{
+        const raw = localStorage.getItem('nn_songs');
+        if(!raw) return null;
+        const arr = JSON.parse(raw);
+        if(!Array.isArray(arr) || !arr.length) return null;
+        const norm = arr.map((item, i) => {
+          const id = Number(item.id ?? (i+1));
+          const title = String(item.title ?? `Track ${id}`);
+          const file = String(item.file ?? item.url ?? '');
+          const cover = String(item.cover ?? item.thumbnail ?? item.image ?? `https://placehold.co/640x360?text=${encodeURIComponent(title)}`);
+          const tags = Array.isArray(item.tags) ? item.tags : [];
+          const lyrics = typeof item.lyrics === 'string' ? item.lyrics : '';
+          return file ? { id, title, file, cover, tags, lyrics } : null;
+        }).filter(Boolean);
 
-  <p style="color:var(--muted); margin-top:18px;">This is a simple dark test page with a rectangular player box. Use the controls to play, then click <strong>Minimize</strong> to see the sticky mini-player behavior.</p>
-</main>
+        // Ensure unique + valid IDs
+        const seen = new Set();
+        norm.forEach((s, idx) => {
+          if (!Number.isFinite(s.id) || seen.has(s.id)) s.id = idx + 1;
+          seen.add(s.id);
+        });
 
-<!-- mini player -->
-<div id="mini" class="mini" aria-hidden="true">
-  <video id="miniVideo" playsinline></video>
-  <div class="mini-bar">
-    <div class="mini-title" id="miniTitle">Afreen Afreen (Test)</div>
-    <div style="display:flex;gap:6px;align-items:center">
-      <button id="miniPrev" class="btn ghost">⏮</button>
-      <button id="miniPlay" class="btn">▶</button>
-      <button id="miniClose" class="btn ghost">✖</button>
-    </div>
-  </div>
-  <div style="padding:8px">
-    <div class="progress"><i id="miniProg"></i></div>
-  </div>
-</div>
+        return norm.length ? norm : null;
+      }catch(e){
+        return null;
+      }
+    }
 
-<script>
-  // Minimal, resilient player logic for the test page
-  const mainVideo = document.getElementById('mainVideo');
-  const playBtn = document.getElementById('playBtn');
-  const miniBtn = document.getElementById('miniBtn');
-  const mini = document.getElementById('mini');
-  const miniVideo = document.getElementById('miniVideo');
-  const miniPlay = document.getElementById('miniPlay');
-  const miniClose = document.getElementById('miniClose');
-  const miniPrev = document.getElementById('miniPrev');
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const timeEl = document.getElementById('time');
-  const miniProg = document.getElementById('miniProg');
 
-  // simple sample playlist (urls must be streamable)
-  const PLAYLIST = [
-    { id:1, title:'Afreen Afreen (Test)', file: 'https://archive.org/download/BigBuckBunny_328/BigBuckBunny_512kb.mp4' },
-    { id:2, title:'Elephants Dream', file: 'https://archive.org/download/ElephantsDream/ed_1024_512kb.mp4' }
-  ];
-  let idx = 0;
-  let isMini = false;
+    //const SONGS = loadSongsFromLocalStorage() ?? AllSONGS;
 
-  function loadIndex(i){
-    idx = (i + PLAYLIST.length) % PLAYLIST.length;
-    mainVideo.src = PLAYLIST[idx].file;
-    miniVideo.src = PLAYLIST[idx].file;
-    document.getElementById('title').textContent = PLAYLIST[idx].title;
-    document.getElementById('miniTitle').textContent = PLAYLIST[idx].title;
+    // Map for colored chips
+    const TAG_CLASS = {
+      love: 'love', spiritual: 'spiritual', devotional:'spiritual', live:'live', sufi:'spiritual', legendary:'legendary'
+    };
+
+    // ===================== HELPERS =====================
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => Array.from(document.querySelectorAll(sel));
+    const fmt = s => isNaN(s) ? '00:00' :
+      `${Math.floor(s/60).toString().padStart(2,'0')}:${Math.floor(s%60).toString().padStart(2,'0')}`;
+
+    function getQuery(){
+      const p = new URLSearchParams(location.search);
+      const id = Number(p.get('id')) || AllSONGS[0].id;
+      const listRaw = p.get('list');
+      const list = listRaw ? listRaw.split(',').map(n=>Number(n)).filter(Boolean) : null;
+      return { id, list };
+    }
+
+    // ===================== STATE =====================
+    let state = {
+      queue: [],         // array of song ids (context: playlist or recommendations)
+      currentId: null,   // active song id
+      minimized: false,
+      liked: new Set(JSON.parse(localStorage.getItem('nn_likes')||'[]')),
+      favs: new Set(JSON.parse(localStorage.getItem('nn_favs')||'[]'))
+    };
+
+    // DOM refs
+    const video = $('#video');
+    const playerWrap = $('#playerWrap');
+    const songTitle = $('#songTitle');
+    const songArtist = $('#songArtist');
+    const songTags = $('#songTags');
+    const btnPlay = $('#btnPlay');
+    const btnPrev = $('#btnPrev');
+    const btnNext = $('#btnNext');
+    const btnMini = $('#btnMini');
+    const btnFs = $('#btnFs');
+    const btnMute = $('#btnMute');
+    const vol = $('#vol');
+    const timeEl = $('#time');
+    const seek = $('#seek');
+    const seekBar = $('#seekBar');
+    const playedBar = $('#played');
+    const bufferedBar = $('#buffered');
+
+    const lyrAcc = $('#accLyrics');
+    const lyrToggle = $('#toggleLyrics');
+    const lyrBody = $('#lyricsBody');
+    const lyrChevron = $('#lyrChevron');
+    const lyrText = $('#lyricsText');
+
+    const sideTitle = $('#sideTitle');
+    const recoList = $('#recoList');
+
+    // mini
+    const mini = $('#mini');
+    const miniVideo = $('#miniVideo');
+    const miniTitle = $('#miniTitle');
+    const miniPlay = $('#miniPlay');
+    const miniPrev = $('#miniPrev');
+    const miniNext = $('#miniNext');
+    const miniClose = $('#miniClose');
+
+    // ===================== INIT =====================
+    const q = getQuery();
+   function getSongById(id){ 
+  return (SONGS.find(s => s.id === id) || AllSONGS.find(s => s.id === id)); 
+}
+
+
+   let SONGS = [];
+function buildQueue(baseId, externalList){
+  if (externalList && externalList.length){
+    SONGS = AllSONGS.filter(s => externalList.includes(s.id));
+    state.queue = externalList;
+    sideTitle.textContent = 'Playlist';
+  } else {
+    const base = AllSONGS.find(s=>s.id===baseId);
+    const tags = new Set(base?.tags||[]);
+    let rec = AllSONGS.filter(s=> s.id!==baseId && s.tags?.some(t=>tags.has(t)));
+
+    if (!rec.length) rec = AllSONGS.filter(s=>s.id!==baseId);
+
+    SONGS = [base, ...rec];   // for sidebar rendering
+    state.queue = [baseId, ...rec.map(s=>s.id)];
+    sideTitle.textContent = 'Recommended';
+  }
+}
+
+    // Render sidebar tiles
+function renderQueue(activeId){
+  const ids = state.queue.length ? state.queue : SONGS.map(s=>s.id);
+  recoList.innerHTML = '';
+  ids.forEach(id=>{
+    const s = getSongById(id);
+    if(!s) return;
+
+    const el = document.createElement('div');
+    el.className = 'tile' + (id===activeId ? ' active' : '');
+    el.innerHTML = `
+      <div class="thumb" style="background-image:url('${s.cover}')"></div>
+      <div class="info">
+        <div class="name">${s.title}</div>
+        <div class="sub">${(s.tags||[]).slice(0,3).join(' • ')}</div>
+      </div>
+    `;
+    el.addEventListener('click', ()=> loadSong(id, true));
+    recoList.appendChild(el);
+  });
+}
+
+    /// Load song into player
+function loadSong(id, pushState = true) {
+  const s = getSongById(id) || SONGS[0];
+  state.currentId = s.id;
+
+  // Update URL (so sharing/back/forward works)
+  if (pushState) {
+    const url = new URL(location.href);
+    url.searchParams.set('id', s.id);
+    history.pushState({}, '', url);
   }
 
-  // update time/progress
-  function updateTime(){
-    const d = mainVideo.duration || 0;
-    const c = mainVideo.currentTime || 0;
-    timeEl.textContent = `${format(c)} / ${format(d)}`;
-    const pct = d ? (c/d)*100 : 0;
-    miniProg.style.width = pct + '%';
-    requestAnimationFrame(updateTime);
+  // Bind meta
+  songTitle.textContent = s.title;
+  songArtist.textContent = 'Nusrat Fateh Ali Khan';
+  songTags.innerHTML = (s.tags || [])
+    .map(t => `<span class="chip ${TAG_CLASS[t] || ''}">${t}</span>`)
+    .join('');
+
+  // Lyrics
+  lyrText.textContent = s.lyrics || 'Lyrics not available for this track.';
+
+  // Video (always autoplay new song)
+  video.src = s.file;
+  video.load();
+  video.play().catch(() => {}); // <-- force autoplay
+
+  // Media Session
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: s.title,
+      artist: 'Nusrat Fateh Ali Khan',
+      album: 'NusratNama',
+      artwork: [{ src: s.cover, sizes: '640x360', type: 'image/jpeg' }]
+    });
   }
-  function format(s){ if(!isFinite(s)) return '00:00'; const m=Math.floor(s/60), sec=Math.floor(s%60); return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0'); }
 
-  // play/pause toggles
-  playBtn.addEventListener('click', ()=>{
-    if (mainVideo.paused){ mainVideo.play().catch(()=>{}); playBtn.textContent='⏸ Pause'; }
-    else { mainVideo.pause(); playBtn.textContent='▶ Play'; }
-  });
+  // Update sidebar highlights
+  renderQueue(s.id);
+}
 
-  miniPlay.addEventListener('click', ()=>{
-    if (miniVideo.paused){ miniVideo.play().catch(()=>{}); miniPlay.textContent='⏸'; }
-    else { miniVideo.pause(); miniPlay.textContent='▶'; }
-  });
 
-  // keep mini and main synced (we will move the same <video> element to mini to avoid double audio)
-  miniBtn.addEventListener('click', ()=> {
-    // move video element into mini to keep continuity
-    if (!isMini){
-      // move mainVideo into mini DOM
-      // store time, then attach element
-      const t = mainVideo.currentTime || 0;
-      const wasPlaying = !mainVideo.paused;
-      mini.insertBefore(mainVideo, mini.firstChild); // move element
-      mainVideo.currentTime = t;
-      if (wasPlaying) mainVideo.play().catch(()=>{});
+      // Sidebar
+      buildQueue(q.id, q.list);
+renderQueue(q.id);
+// loadSong(q.id, true);
+
+    
+
+    // Controls: time + progress
+    function updateTime(){
+      const d = video.duration || 0, c = video.currentTime || 0;
+      timeEl.textContent = `${fmt(c)} / ${fmt(d)}`;
+      const playedPct = d ? (c/d)*100 : 0;
+      playedBar.style.width = playedPct + '%';
+
+      // buffered
+      if (video.buffered && video.buffered.length){
+        const end = video.buffered.end(video.buffered.length-1);
+        const bufPct = d ? (end/d)*100 : 0;
+        bufferedBar.style.width = bufPct + '%';
+      }
+      requestAnimationFrame(updateTime);
+    }
+
+    // Seek handling
+    function seekAt(clientX){
+      const rect = seek.getBoundingClientRect();
+      const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+      video.currentTime = ratio * (video.duration || 0);
+    }
+
+    // Next / Prev logic within queue
+    function nextId(){
+      const idx = state.queue.indexOf(state.currentId);
+      return state.queue[(idx+1) % state.queue.length];
+    }
+    function prevId(){
+      const idx = state.queue.indexOf(state.currentId);
+      return state.queue[(idx-1+state.queue.length) % state.queue.length];
+    }
+
+    // ===================== MINI PLAYER =====================
+    function minimize(){
+      if (state.minimized) return; // already minimized
+      state.minimized = true;
+      // Move the playing <video> element into mini player to keep continuity
+      miniVideo.replaceWith(video);
+      mini.insertBefore(video, mini.firstChild);
       mini.classList.add('active');
-      isMini = true;
-      // update buttons text
-      miniPlay.textContent = mainVideo.paused ? '▶' : '⏸';
-      playBtn.textContent = '▶ Play';
+      playerWrap.style.display = 'none';
+      miniTitle.textContent = songTitle.textContent;
+      localStorage.setItem('nn_mini', JSON.stringify({ id: state.currentId, t: video.currentTime }));
     }
-  });
-
-  // restore from mini to full
-  mini.addEventListener('click', (e)=>{
-    // if user clicks expand area (not the controls), restore
-    const target = e.target;
-    if (target === mini || target.id==='miniTitle') {
-      const container = document.querySelector('.player-top');
-      container.insertBefore(mainVideo, container.firstChild);
+    function restore(){
+      if (!state.minimized) return;
+      state.minimized = false;
+      // Move <video> back to main player box
+      const box = document.getElementById('playerBox');
+      box.insertBefore(video, box.firstChild);
       mini.classList.remove('active');
-      isMini = false;
-      // keep playing state
-      playBtn.textContent = mainVideo.paused ? '▶ Play' : '⏸ Pause';
+      playerWrap.style.display = '';
+      localStorage.removeItem('nn_mini');
     }
-  });
-
-  miniClose.addEventListener('click', (e)=>{
-    e.stopPropagation();
-    mainVideo.pause();
-    // if mini visible, move back silently and hide
-    if (isMini){
-      const container = document.querySelector('.player-top');
-      container.insertBefore(mainVideo, container.firstChild);
-      mini.classList.remove('active');
-      isMini = false;
+    function closeMini(){
+      video.pause();
+      restore();
     }
-  });
 
-  // next/prev basic
-  prevBtn.addEventListener('click', ()=> loadIndex(idx-1));
-  nextBtn.addEventListener('click', ()=> loadIndex(idx+1));
-  miniPrev.addEventListener('click', ()=> loadIndex(idx-1));
-  // mini play controls handled above
+    // ===================== EVENTS =====================
+    // Player buttons
+    btnPlay.addEventListener('click', ()=> video.paused ? video.play() : video.pause());
+    btnPrev.addEventListener('click', ()=> loadSong(prevId()));
+    btnNext.addEventListener('click', ()=> loadSong(nextId()));
+    btnMini.addEventListener('click', minimize);
 
-  // when video ends auto go next and play
-  mainVideo.addEventListener('ended', ()=> { loadIndex(idx+1); mainVideo.play().catch(()=>{}); });
+    btnFs.addEventListener('click', ()=>{
+      const el = document.getElementById('playerWrap');
+      if (!document.fullscreenElement) el.requestFullscreen?.();
+      else document.exitFullscreen?.();
+    });
 
-  // initialization
-  loadIndex(0);
-  requestAnimationFrame(updateTime);
-</script>
+    vol.addEventListener('input', ()=> { video.volume = +vol.value; video.muted = (video.volume===0); });
+    btnMute.addEventListener('click', ()=> { video.muted = !video.muted; });
+
+    // Seek mouse & touch
+    seek.addEventListener('click', e=> seekAt(e.clientX));
+    seek.addEventListener('mousemove', e=> { if (e.buttons===1) seekAt(e.clientX); });
+    seek.addEventListener('touchstart', e=> { if (e.touches[0]) seekAt(e.touches[0].clientX); }, {passive:true});
+    seek.addEventListener('touchmove', e=> { if (e.touches[0]) seekAt(e.touches[0].clientX); }, {passive:true});
+
+    // Update loops
+    video.addEventListener('play', ()=> btnPlay.textContent = '⏸ Pause');
+    video.addEventListener('pause', ()=> btnPlay.textContent = '▶️ Play');
+    video.addEventListener('ended', ()=> loadSong(nextId()));
+
+    // Acc: Lyrics
+    let lyrOpen = false;
+    lyrToggle.addEventListener('click', ()=>{
+      lyrOpen = !lyrOpen;
+      lyrBody.style.maxHeight = lyrOpen ? (lyrText.scrollHeight + 24) + 'px' : '0px';
+      lyrChevron.textContent = lyrOpen ? '▴' : '▾';
+    });
+
+    // Sidebar mini controls mirror
+    miniPlay.addEventListener('click', ()=> video.paused ? video.play() : video.pause());
+    miniPrev.addEventListener('click', ()=> loadSong(prevId()));
+    miniNext.addEventListener('click', ()=> loadSong(nextId()));
+    miniClose.addEventListener('click', closeMini);
+
+    // Keyboard shortcuts
+    window.addEventListener('keydown', (e)=>{
+      if (['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+      if (e.code==='Space'){ e.preventDefault(); video.paused ? video.play() : video.pause(); }
+      if (e.key==='ArrowRight') video.currentTime = Math.min((video.currentTime||0)+5, video.duration||0);
+      if (e.key==='ArrowLeft') video.currentTime = Math.max((video.currentTime||0)-5, 0);
+      if (e.key==='f' || e.key==='F') btnFs.click();
+      if (e.key==='m' || e.key==='M') btnMute.click();
+      if (e.key==='l' || e.key==='L') lyrToggle.click();
+    });
+
+    // History popstate (back/forward)
+    window.addEventListener('popstate', ()=>{
+      const { id, list } = getQuery();
+      buildQueue(id, list);
+      loadSong(id, false);
+    });
+
+    // Media Session actions
+    if ('mediaSession' in navigator){
+      navigator.mediaSession.setActionHandler('play', ()=> video.play());
+      navigator.mediaSession.setActionHandler('pause', ()=> video.pause());
+      navigator.mediaSession.setActionHandler('previoustrack', ()=> loadSong(prevId()));
+      navigator.mediaSession.setActionHandler('nexttrack', ()=> loadSong(nextId()));
+      navigator.mediaSession.setActionHandler('seekbackward', ()=> video.currentTime = Math.max(0,(video.currentTime||0)-10));
+      navigator.mediaSession.setActionHandler('seekforward', ()=> video.currentTime = Math.min((video.currentTime||0)+10, video.duration||0));
+    }
+
+    // Boot
+    (function init(){
+      const { id, list } = getQuery();
+      buildQueue(id, list);
+      renderQueue(id);
+      loadSong(id, false);
+      const volEl = document.getElementById('vol');
+      const videoEl = document.getElementById('video');
+      videoEl.volume = +volEl.value;
+      requestAnimationFrame(updateTime);
+
+      // Restore mini if needed (same-page only)
+      const saved = localStorage.getItem('nn_mini');
+      if (saved){ try{ const data = JSON.parse(saved); if (data?.id){ loadSong(data.id, false); video.currentTime = data.t||0; minimize(); } } catch(_){} }
+    })();
+  </script>
 </body>
 </html>

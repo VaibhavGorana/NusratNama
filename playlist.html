@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Nusratnama | Playlist</title>
+<style>
+  /* ---------- Theme ---------- */
+  :root {
+    --bg:#080706;
+    --text:#efeae1;
+    --muted:#bfb7ac;
+    --gold:#d4af37;
+    --maroon:#58151c;
+    --panel:rgba(0,0,0,0.55);
+    --card:rgba(0,0,0,0.55);
+    --radius:14px;
+  }
+
+  *{box-sizing:border-box}
+  body {
+    margin:0;
+    font-family: Georgia, "Times New Roman", serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+
+  a {
+    color:inherit;
+    text-decoration:none;
+    position:relative;
+  }
+  a::after {
+    content:"";
+    position:absolute;
+    left:0; bottom:-3px;
+    width:0%; height:2px;
+    background:var(--gold);
+    transition:width .3s ease;
+  }
+  a:hover::after { width:100%; }
+
+/* ===== HEADER (consistent) ===== */
+header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 36px;
+  background: linear-gradient(rgba(0,0,0,0.20), rgba(0,0,0,0.08));
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba(212,175,55,0.06);
+  transition: background .22s, padding .22s;
+  font-family: Georgia, "Times New Roman", serif;
+}
+header.scrolled {
+  background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.55));
+  padding: 12px 28px;
+}
+.logo {
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 1.45rem;
+  letter-spacing: 1px;
+}
+nav {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+nav a {
+  color: #efeae1;
+  font-weight: 600;
+  padding: 6px 8px;
+  border-radius: 6px;
+  position: relative;
+}
+nav a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  height: 2px;
+  width: 0;
+  background: var(--gold);
+  transition: width .24s;
+}
+nav a:hover {
+  color: var(--gold);
+}
+nav a:hover::after {
+  width: 100%;
+}
+  header .mini-player {
+    font-size:0.85rem;
+    background:rgba(255,255,255,0.05);
+    padding:6px 12px; border-radius:10px;
+    border:1px solid rgba(255,255,255,0.08);
+    color:var(--muted);
+  }
+
+  /* ---------- Hero ---------- */
+  .playlist-hero {
+    display:flex;
+    gap:24px;
+    padding:120px 28px 28px; /* push down under fixed header */
+    background:linear-gradient(180deg, rgba(0,0,0,0.55), transparent);
+    align-items:center;
+  }
+  .thumb {
+    width:160px; height:160px;
+    border-radius:var(--radius);
+    background:linear-gradient(180deg,#171717,#222);
+    display:flex; align-items:center; justify-content:center;
+    font-size:2.25rem; font-weight:700; color:var(--gold);
+    flex-shrink:0;
+    box-shadow:0 12px 40px rgba(212,175,55,0.08);
+  }
+  .hero-info h1 { margin:0; font-size:2rem; color:var(--text); }
+  .hero-info p.desc { margin:8px 0; color:var(--muted); max-width:70ch; }
+  .meta-row { color:var(--muted); font-size:0.9rem; margin-top:6px; }
+  .hero-actions { margin-top:14px; display:flex; gap:12px; align-items:center; }
+  .btn {
+    background:var(--gold); color:#111;
+    border:0; padding:10px 16px; border-radius:12px; font-weight:700;
+    cursor:pointer;
+    box-shadow:0 8px 24px rgba(212,175,55,0.12);
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .btn:hover { transform:translateY(-3px); box-shadow:0 12px 32px rgba(212,175,55,0.18); }
+  .control {
+    background:var(--card);
+    border:1px solid rgba(255,255,255,0.06);
+    padding:8px 10px; border-radius:10px; color:var(--text);
+    transition:box-shadow .25s;
+  }
+  .control:focus {
+    outline:none;
+    box-shadow:0 0 0 2px var(--gold);
+  }
+
+  /* ---------- Layout ---------- */
+  .container { display:grid; grid-template-columns:3fr 1fr; gap:24px; padding:26px; }
+  @media(max-width:980px){ .container{grid-template-columns:1fr} .playlist-hero{flex-direction:column;align-items:flex-start} .thumb{width:120px;height:120px} }
+
+  /* ---------- Songs list ---------- */
+  .songs-area { display:flex; justify-content:center; }
+  .songs-wrapper { width:100%; max-width:66vw; min-width:320px; }
+  @media(max-width:1100px){ .songs-wrapper { max-width:95vw; } }
+
+  .songs-list.list-view { display:flex; flex-direction:column; gap:10px; padding-bottom:20px; }
+  .song-item {
+    display:flex; align-items:center; gap:14px; padding:12px;
+    border-radius:12px;
+    background:var(--card);
+    border:1px solid rgba(255,255,255,0.05);
+    cursor:pointer;
+    transition:transform .2s ease, box-shadow .25s ease;
+  }
+  .song-item:hover {
+    transform:translateY(-6px);
+    box-shadow:0 12px 32px rgba(212,175,55,0.08);
+  }
+  .song-index { width:36px; text-align:center; color:var(--muted); font-weight:600 }
+  .song-thumb {
+    width:56px; height:56px; border-radius:10px; object-fit:cover;
+    flex-shrink:0; background:#111;
+  }
+  .song-meta { flex:1; min-width:0 }
+  .song-meta h4 { margin:0; font-size:1rem; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+  .song-meta p { margin:4px 0 0; color:var(--muted); font-size:0.88rem }
+  .song-duration { color:var(--muted); font-size:0.88rem; min-width:52px; text-align:right }
+
+  /* ---------- Grid cards ---------- */
+  .songs-list.grid-view { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  @media(max-width:1200px){ .songs-list.grid-view{grid-template-columns:repeat(3,1fr)} }
+  @media(max-width:880px){ .songs-list.grid-view{grid-template-columns:repeat(2,1fr)} }
+  @media(max-width:540px){ .songs-list.grid-view{grid-template-columns:repeat(1,1fr)} }
+
+  .card {
+    background:var(--card);
+    border-radius:12px;
+    display:flex; flex-direction:column; gap:10px;
+    padding:12px; cursor:pointer;
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .card:hover {
+    transform:translateY(-8px);
+    box-shadow:0 12px 40px rgba(212,175,55,0.12);
+  }
+  .card img { width:100%; height:150px; object-fit:cover; border-radius:10px; }
+  .card .tags { font-size:0.75rem; color: #d4af37; display:flex; gap:6px; flex-wrap:wrap }
+  .tag-pill { background:rgba(255,255,255,0.05); padding:4px 8px; border-radius:999px; }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar {
+    background:var(--panel);
+    padding:16px; border-radius:var(--radius);
+    backdrop-filter:blur(6px);
+  }
+  .sidebar h3 { margin:0 0 12px 0; color:var(--text); }
+  .related-item {
+    padding:12px; border-radius:12px; background:whitesmoke;
+    margin-bottom:12px; cursor:pointer;
+    transition:transform .2s ease, box-shadow .25s ease;
+  }
+  .related-item:hover {
+    transform:translateY(-6px);
+    box-shadow:0 10px 28px rgba(212,175,55,0.08);background:rgba(149, 199, 211, 0.2);
+  }
+  /* ---------- Footer ---------- */
+  footer {
+    font-size:0.85rem;
+    color:var(--muted);
+    text-align:center;
+    padding:22px;
+    border-top:1px solid rgba(255,255,255,0.05);
+    margin-top:40px;
+  }
+#playlistTitle {
+  color: var(--gold);
+  text-shadow: 0 0 8px rgba(241, 187, 9, 0.6);
+  animation: pulse 3s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { text-shadow: 0 0 8px rgba(212,175,55,0.6); }
+  50% { text-shadow: 0 0 18px rgba(212,175,55,0.9); }
+}
+#hero{
+    background-color: rgb(209, 209, 186);
+}
+.container{
+     background-color: rgb(8, 8, 8);
+}
+</style><link rel="icon" type="image/png" href="1000045731.png">
+<body>
+  <!-- header (consistent) -->
+<header id="site-header">
+  <div class="logo">NusratNama</div>
+  <nav aria-label="Main navigation">
+    <a href="index.html">Home</a>
+    <a href="allsong.html">All Songs</a>
+    <a href="legacy.html">Legacy</a>
+    <a href="discover.html">Discover</a>
+    <a href="join.html">Join</a>
+  </nav>
+</header>
+
+
+
+  <!-- HERO -->
+  <section class="playlist-hero" id="hero">
+    <div class="thumb" id="playlistThumb">PL</div>
+    <div class="hero-info">
+      <h1 id="playlistTitle">Loading playlist…</h1>
+      <p class="desc" id="playlistDesc">—</p>
+      <div class="meta-row" id="playlistMeta">—</div>
+      <div class="hero-actions">
+        <button class="btn" id="playAllBtn" aria-label="Play entire playlist">▶ Play Playlist</button>
+        <button class="control" id="toggleViewBtn" aria-pressed="false">Grid view</button>
+        <select id="sortSelect" class="control" title="Sort playlist">
+          <option value="date">Date added</option>
+          <option value="az">Name A–Z</option>
+          <option value="za">Name Z–A</option>
+          <option value="length">Length (if available)</option>
+          <option value="reverse">Reverse</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTENT -->
+  <main class="container">
+    <section class="songs-area">
+      <div class="songs-wrapper">
+        <div id="songsContainer" class="songs-list list-view">
+          <!-- rendered dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <aside class="sidebar" id="sidebar">
+      <h3>More Like This</h3>
+      <div id="relatedPlaylists"></div>
+    </aside>
+  </main>
+
+  <footer>
+    <div>&copy; 2025 Nusratnama</div>
+    <div class="muted small">NusratNama only host video via links.NO copyrighted content uploaded.</div>
+  </footer>
+
+  <!-- external data files expected: allsongs.js (AllSONGS) and playlist.js (MOODS) -->
+  <script src="allsong.js"></script>
+  <script src="playlist.js"></script>
+
+  <script>
+  /***********************
+   * Utils
+   ***********************/
+  const header = document.getElementById("site-header");
+window.addEventListener("scroll", () => {
+  header.classList.toggle("scrolled", window.scrollY > 10);
+});
+
+  window.addEventListener("scroll", () => {
+  const header = document.querySelector("header");
+  header.classList.toggle("scrolled", window.scrollY > 10);
+});
+
+  function qParam(name) {
+    const url = new URL(window.location.href);
+    return url.searchParams.get(name);
+  }
+
+  function fmtDate(dStr){
+    try{
+      const d = new Date(dStr);
+      return d.toLocaleDateString();
+    }catch(e){return dStr}
+  }
+
+  function safeGetSong(id){
+    return AllSONGS.find(s => String(s.id) === String(id));
+  }
+
+  /***********************
+   * Boot
+   ***********************/
+  (function init(){
+    const pid = qParam('id'); // playlist id comes in as ?id=#
+    if(!pid){
+      document.getElementById('playlistTitle') && (document.getElementById('playlistTitle').textContent = 'Playlist not specified');
+      document.getElementById('playlistDesc').textContent = 'Open a playlist from Discover (example: playlist.html?id=2)';
+      document.getElementById('playlistMeta').textContent = 'No playlist loaded';
+      document.getElementById('songsContainer').innerHTML = '<div class="empty">No playlist selected.</div>';
+      return;
+    }
+
+    const playlist = MOODS.find(p => String(p.id) === String(pid));
+    if(!playlist){
+      document.getElementById('playlistTitle') && (document.getElementById('playlistTitle').textContent = 'Playlist not found');
+      document.getElementById('playlistDesc').textContent = `No playlist with id=${pid}`;
+      document.getElementById('songsContainer').innerHTML = '<div class="empty">Playlist data not found.</div>';
+      console.warn('Playlist not found for id=',pid);
+      return;
+    }
+
+    const playlistSongObjs = (playlist.songs || []).map(sid => safeGetSong(sid)).filter(Boolean);
+    const playlistSongIds  = (playlist.songs || []).filter(Boolean);
+
+    // Expose current state (read-only)
+    window.__NN = { playlist, playlistSongObjs, playlistSongIds };
+
+    renderHero(playlist, playlistSongObjs);
+    renderRelated(playlist);
+    renderSongsList(playlistSongObjs, 'list', playlist);
+
+    setupControls(playlist, playlistSongObjs);
+  })();
+
+  /***********************
+   * Rendering helpers
+   ***********************/
+  function renderHero(playlist, playlistSongs){
+    const titleEl = document.getElementById('playlistTitle');
+    const descEl  = document.getElementById('playlistDesc');
+    const metaEl  = document.getElementById('playlistMeta');
+    const thumb   = document.getElementById('playlistThumb');
+
+    if(titleEl) titleEl.textContent = playlist.title || 'Untitled';
+    if(descEl)  descEl.textContent  = playlist.desc || '';
+    const created = playlist.created ? fmtDate(playlist.created) : 'Unknown date';
+    if(metaEl)  metaEl.textContent  = `Created on ${created} • ${playlistSongs.length} song${playlistSongs.length !== 1 ? 's' : ''}`;
+
+    const firstCover = playlistSongs.length && playlistSongs[0].cover ? playlistSongs[0].cover : null;
+    if(firstCover){
+      thumb.style.background = 'transparent';
+      thumb.innerHTML = `<img src="${firstCover}" alt="${playlist.title}" style="width:100%;height:100%;object-fit:cover;border-radius:12px">`;
+    } else {
+      thumb.style.background = 'linear-gradient(180deg,#171717,#222)';
+      thumb.textContent = (playlist.title || 'PL').slice(0,2).toUpperCase();
+    }
+  }
+
+  function renderSongsList(songs, viewMode='list', playlist){
+    const container = document.getElementById('songsContainer');
+    container.className = 'songs-list ' + (viewMode === 'list' ? 'list-view' : 'grid-view');
+    container.innerHTML = '';
+
+    if(!songs || songs.length === 0){
+      container.innerHTML = '<div class="empty">No songs in this playlist.</div>'; 
+      return;
+    }
+
+    const listParam = (playlist.songs || []).join(',');
+
+    songs.forEach((song, idx) => {
+      const item = document.createElement('div');
+      item.className = viewMode === 'list' ? 'song-item' : 'card song-item';
+
+      // Click: open player with current song + full playlist queue
+      // Click: open player with current song + full playlist queue
+item.addEventListener('click', () => {
+  const pid = encodeURIComponent(window.__NN.playlist.id);
+  const sid = encodeURIComponent(song.id);
+  const listParam = window.__NN.playlist.songs.join(",");
+  window.location.href = `player.html?id=${sid}&list=${encodeURIComponent(listParam)}&pid=${pid}`;
+});
+
+
+      if(viewMode === 'list'){
+        item.innerHTML = `
+          <div class="song-index">${idx+1}</div>
+          <div class="song-thumb-wrap"><img class="song-thumb" src="${song.cover || 'assets/placeholder-cover.png'}" alt=""></div>
+          <div class="song-meta">
+            <h4 title="${song.title}">${song.title}</h4>
+            <p>${song.artist || ''}</p>
+          </div>
+          <div class="song-duration">${song.duration ? song.duration : ''}</div>
+        `;
+      } else {
+        const tagsHtml = (song.tags && song.tags.length) ? song.tags.slice(0,3).map(t=>`<span class="tag-pill">${t}</span>`).join(' ') : '';
+        item.innerHTML = `
+          <img src="${song.cover || 'assets/placeholder-cover.png'}" alt="${song.title}">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <strong style="font-size:0.98rem">${song.title}</strong>
+              <span class="muted small">${song.duration || ''}</span>
+            </div>
+            <div class="tags">${tagsHtml}</div>
+            <div class="muted small">${song.artist || ''}</div>
+          </div>
+        `;
+      }
+
+      container.appendChild(item);
+    });
+  }
+
+  function renderRelated(currentPlaylist){
+    const rel = document.getElementById('relatedPlaylists');
+    rel.innerHTML = '';
+    const others = MOODS.filter(p => String(p.id) !== String(currentPlaylist.id)).slice(0,6);
+
+    others.forEach(p => {
+      const d = document.createElement('div');
+      d.className = 'related-item';
+      d.innerHTML = `<strong>${p.title}</strong><div class="muted small">${p.desc ? (p.desc.slice(0,80)+'...') : ''}</div>`;
+      d.addEventListener('click', () => {
+        // Navigate with the correct param (?id=...), not ?pid
+        window.location.href = `playlist.html?id=${encodeURIComponent(p.id)}`;
+      });
+      rel.appendChild(d);
+    });
+  }
+
+  /***********************
+   * Controls (sort/toggle/play)
+   ***********************/
+  function setupControls(playlist, originalSongs){
+    const sortSelect = document.getElementById('sortSelect');
+    const toggleBtn  = document.getElementById('toggleViewBtn');
+    const playAllBtn = document.getElementById('playAllBtn');
+
+    let currentView  = 'list';
+    let workingSongs = originalSongs.slice(); // local copy for sorts
+
+    sortSelect.addEventListener('change', (e) => {
+      const v = e.target.value;
+
+      if(v === 'az'){
+        workingSongs.sort((a,b) => (a.title||'').localeCompare(b.title || ''));
+      } else if(v === 'za'){
+        workingSongs.sort((a,b) => (b.title||'').localeCompare(a.title || ''));
+      } else if(v === 'reverse'){
+        workingSongs.reverse();
+      } else if(v === 'length'){
+        // sort by parsed duration if available, else fall back to plays
+        function durToSec(d){
+          if(!d) return 0;
+          if(typeof d === 'number') return d;
+          if(/:/g.test(d)){
+            const parts = d.split(':').map(Number);
+            return parts.reduce((acc,cur)=>acc*60+cur,0);
+          }
+          const n = parseFloat(d);
+          return isNaN(n)?0:n;
+        }
+        if(workingSongs.some(s => s.duration)){
+          workingSongs.sort((a,b) => durToSec(a.duration) - durToSec(b.duration));
+        } else if (workingSongs.some(s=>s.plays)){
+          workingSongs.sort((a,b)=> (b.plays||0) - (a.plays||0));
+        }
+      } else {
+        // "date" -> original order from playlist.songs
+        workingSongs = (playlist.songs || []).map(sid => safeGetSong(sid)).filter(Boolean);
+      }
+
+      renderSongsList(workingSongs, currentView, playlist);
+    });
+
+    toggleBtn.addEventListener('click', () => {
+      currentView = (currentView === 'list') ? 'grid' : 'list';
+      toggleBtn.textContent = currentView === 'list' ? 'Grid view' : 'List view';
+      toggleBtn.setAttribute('aria-pressed', String(currentView !== 'list'));
+      renderSongsList(workingSongs, currentView, playlist);
+    });
+
+    playAllBtn.addEventListener('click', () => {
+      if(!workingSongs || workingSongs.length === 0) return;
+      const firstSong = workingSongs[0];
+      const listParam = (playlist.songs || []).join(',');
+      window.location.href = `player.html?id=${encodeURIComponent(firstSong.id)}&list=${encodeURIComponent(listParam)}`;
+    });
+  }
+
+  // Optional: if you ever switch playlists with history.pushState, this will refresh render on back/forward.
+  window.addEventListener("popstate", () => {
+    location.reload();
+  });
+</script>
+</body>
+</html>

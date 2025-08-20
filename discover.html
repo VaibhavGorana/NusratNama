@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>NusratNama — Discover</title>
+  <title>NusratNama | Discover</title>
   <meta name="description" content="Discover NusratNama: browse mood-based playlists and explore qawwalis by emotion." />
   <style>
     /* ===== RESET ===== */
@@ -120,7 +120,7 @@
     }
     .discover-hero {
         margin-top: 80px;
-        background-image: url('tree-736882_1920.jpg');
+        background-image: url('asset/moon1.jpg');
         background-position: center;
         background-size: cover;
         background-repeat: no-repeat;
@@ -130,7 +130,7 @@
 
 
     }
-  </style>
+  </style><link rel="icon" type="image/png" href="1000045731.png">
 </head>
 <body>
 
@@ -139,6 +139,7 @@
     <div class="logo">NusratNama</div>
     <nav aria-label="Main navigation">
       <a href="index.html">Home</a>
+      <a href="allsong.html">All Songs</a>
       <a href="legacy.html">Legacy</a>
       <a href="discover.html" aria-current="page">Discover</a>
       <a href="join.html">Join</a>
@@ -211,249 +212,134 @@
       </div>
     </div>
   </footer>
+<script src="playlist.js"></script>
+<script>
+  /* ===== utilities ===== */
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
 
-  <!-- DATA + SCRIPTS -->
-  <script>
-    /* ===== sample moods data (placeholder, replace with real content later) ===== */
-    const MOODS = [
-      {
-        id: 'ishq',
-        title: 'Love & Romance',
-        desc: 'Tender qawwalis and romantic ghazals — the language of ishq.',
-        thumb: '', // optional img path
-        songs: [
-          { title: 'Afreen Afreen (sample)', yt: '#', note: 'Live performance (placeholder)' },
-          { title: 'Tum Ek Gorakh Dhanda Ho', yt: '#', note: 'Live sample' }
-        ]
-      },
-      {
-        id: 'ruhani',
-        title: 'Devotion & Ruhani',
-        desc: 'Spiritual qawwalis that open the heart to the Divine.',
-        songs: [
-          { title: 'Tajdar-e-Haram', yt: '#', note: 'Devotional classic' },
-          { title: 'Allah Hoo (sample)', yt: '#', note: 'Sufi invocation' }
-        ]
-      },
-      {
-        id: 'mehfil',
-        title: 'Mehfil & Live',
-        desc: 'Long live performances, audience interaction, soulful alaaps.',
-        songs: [
-          { title: 'Live Session (placeholder)', yt: '#', note: 'Extended mehfil performance' },
-          { title: 'Classic Live Clip', yt: '#', note: 'Audience favorite' }
-        ]
-      },
-      {
-        id: 'celebration',
-        title: 'Celebration',
-        desc: 'Festive qawwalis for joyous gatherings.',
-        songs: [
-          { title: 'Celebratory Track', yt: '#', note: 'Energy & clapping' }
-        ]
-      },
-      {
-        id: 'melancholy',
-        title: 'Melancholy & Reflection',
-        desc: 'Slower pieces — introspective and tender.',
-        songs: [
-          { title: 'Slow Ghazal (placeholder)', yt: '#', note: 'Reflective mood' }
-        ]
-      },
-      {
-        id: 'power',
-        title: 'Power & Passion',
-        desc: 'High energy qawwalis, intense vocals and rhythmic drive.',
-        songs: [
-          { title: 'Powerful Rendition', yt: '#', note: 'Strong vocal performance' }
-        ]
-      }
-    ];
+  /* ===== render playlist (moods) cards ===== */
+  const moodsGrid = $('#moods-grid');
+  function renderMoods(list) {
+    moodsGrid.innerHTML = '';
+    list.forEach(m => {
+      const card = document.createElement('div');
+      card.className = 'mood-card';
+      card.setAttribute('role','listitem');
+      card.dataset.id = m.id;
 
-    /* ===== utilities ===== */
-    const $ = s => document.querySelector(s);
-    const $$ = s => Array.from(document.querySelectorAll(s));
+      const visual = document.createElement('div');
+      visual.className = 'mood-visual';
+      visual.textContent = m.title.split(' ')[0]; // simple placeholder
 
-    /* ===== render mood cards ===== */
-    const moodsGrid = $('#moods-grid');
-    function renderMoods(list) {
-      moodsGrid.innerHTML = '';
-      list.forEach(m => {
-        const card = document.createElement('div');
-        card.className = 'mood-card';
-        card.setAttribute('role','listitem');
-        card.dataset.id = m.id;
+      const title = document.createElement('div');
+      title.className = 'mood-title';
+      title.textContent = m.title;
 
-        const visual = document.createElement('div');
-        visual.className = 'mood-visual';
-        visual.textContent = m.title.split(' ')[0]; // simple placeholder visual text
+      const desc = document.createElement('div');
+      desc.className = 'mood-desc';
+      desc.textContent = m.desc;
 
-        const title = document.createElement('div');
-        title.className = 'mood-title';
-        title.textContent = m.title;
+      const actions = document.createElement('div');
+      actions.className = 'mood-actions';
 
-        const desc = document.createElement('div');
-        desc.className = 'mood-desc';
-        desc.textContent = m.desc;
-
-        const actions = document.createElement('div');
-        actions.className = 'mood-actions';
-        const btnOpen = document.createElement('button');
-        btnOpen.className = 'btn-primary';
-        btnOpen.textContent = 'Open Playlist';
-        btnOpen.addEventListener('click', (ev) => {
-          ev.stopPropagation();
-          openPlaylist(m.id);
-        });
-        const btnPreview = document.createElement('button');
-        btnPreview.className = 'btn-ghost';
-        btnPreview.textContent = 'Preview';
-        btnPreview.addEventListener('click', (ev) => {
-          ev.stopPropagation();
-          previewPlay(m.id);
-        });
-
-        actions.appendChild(btnOpen);
-        actions.appendChild(btnPreview);
-
-        card.appendChild(visual);
-        card.appendChild(title);
-        card.appendChild(desc);
-        card.appendChild(actions);
-
-        card.addEventListener('click', ()=> openPlaylist(m.id));
-        moodsGrid.appendChild(card);
-      });
-    }
-
-    /* ===== featured mood: random on load ===== */
-    const fmMood = $('#fm-mood');
-    const fmSong = $('#fm-song');
-    const fmThumb = $('#fm-thumb');
-    const fmPlay = $('#fm-play');
-    let featured = null;
-    function pickFeatured(){
-      const i = Math.floor(Math.random() * MOODS.length);
-      featured = MOODS[i];
-      fmMood.textContent = featured.title;
-      fmSong.textContent = featured.songs?.[0]?.title || '—';
-      fmThumb.textContent = featured.title.split(' ')[0].slice(0,2).toUpperCase();
-    }
-    fmPlay.addEventListener('click', ()=>{
-      // For Phase 1: open playlist modal and highlight first song
-      if(featured) openPlaylist(featured.id, 0);
-    });
-
-    /* ===== search filter ===== */
-    const searchInput = $('#search');
-    const clearBtn = $('#clear-search');
-    function filterMoods(q){
-      const term = (q||'').trim().toLowerCase();
-      if(!term) return MOODS;
-      return MOODS.filter(m => {
-        if(m.title.toLowerCase().includes(term)) return true;
-        if(m.desc && m.desc.toLowerCase().includes(term)) return true;
-        // check songs
-        if(m.songs && m.songs.some(s => s.title.toLowerCase().includes(term))) return true;
-        return false;
-      });
-    }
-    searchInput.addEventListener('input', (e)=>{
-      const filtered = filterMoods(e.target.value);
-      renderMoods(filtered);
-    });
-    clearBtn.addEventListener('click', ()=>{
-      searchInput.value = '';
-      renderMoods(MOODS);
-    });
-
-    /* ===== modal open / close / populate ===== */
-    const modal = $('#modal');
-    const modalTitle = $('#modal-title');
-    const modalDesc = $('#modal-desc');
-    const modalList = $('#modal-list');
-    const modalClose = $('#modal-close');
-
-    function openPlaylist(id, highlightIndex = -1){
-      const mood = MOODS.find(m => m.id === id);
-      if(!mood) return;
-      modalTitle.textContent = mood.title;
-      modalDesc.textContent = mood.desc || '';
-      modalList.innerHTML = '';
-      mood.songs.forEach((s, idx) => {
-        const row = document.createElement('div');
-        row.className = 'song-row';
-        const info = document.createElement('div');
-        info.style.flex = '1';
-        const t = document.createElement('div');
-        t.className = 'title';
-        t.textContent = s.title;
-        const meta = document.createElement('div');
-        meta.className = 'meta';
-        meta.textContent = s.note || '';
-        info.appendChild(t);
-        info.appendChild(meta);
-
-        const controls = document.createElement('div');
-        controls.style.display = 'flex';
-        controls.style.gap = '8px';
-        const play = document.createElement('button');
-        play.className = 'btn-primary';
-        play.textContent = 'Open';
-        // For Phase 1: "Open" will open YouTube or do nothing if '#'
-        play.addEventListener('click', (ev) => {
-          ev.stopPropagation();
-          if(s.yt && s.yt !== '#') window.open(s.yt, '_blank');
-          else alert('YouTube link not set — replace s.yt in data with actual URL when ready.');
-        });
-
-        controls.appendChild(play);
-        row.appendChild(info);
-        row.appendChild(controls);
-
-        if(idx === highlightIndex) row.style.outline = '2px solid rgba(212,175,55,0.18)';
-        modalList.appendChild(row);
+      const btnOpen = document.createElement('button');
+      btnOpen.className = 'btn-primary';
+      btnOpen.textContent = 'Open Playlist';
+      btnOpen.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        goToPlaylist(m.id);
       });
 
-      modal.classList.add('active');
-      modal.setAttribute('aria-hidden','false');
-    }
+      const btnPreview = document.createElement('button');
+      btnPreview.className = 'btn-ghost';
+      btnPreview.textContent = 'Preview';
+      btnPreview.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        previewPlay(m.id);
+      });
 
-    modalClose.addEventListener('click', ()=> {
-      modal.classList.remove('active');
-      modal.setAttribute('aria-hidden','true');
+      actions.appendChild(btnOpen);
+      actions.appendChild(btnPreview);
+
+      card.appendChild(visual);
+      card.appendChild(title);
+      card.appendChild(desc);
+      card.appendChild(actions);
+
+      card.addEventListener('click', ()=> goToPlaylist(m.id));
+      moodsGrid.appendChild(card);
     });
-    modal.addEventListener('click', (ev)=> {
-      if(ev.target === modal) { modal.classList.remove('active'); modal.setAttribute('aria-hidden','true'); }
+  }
+
+  /* ===== featured mood: random on load ===== */
+  const fmMood = $('#fm-mood');
+  const fmSong = $('#fm-song');
+  const fmThumb = $('#fm-thumb');
+  const fmPlay = $('#fm-play');
+  let featured = null;
+
+  function pickFeatured(){
+    const i = Math.floor(Math.random() * MOODS.length);
+    featured = MOODS[i];
+    fmMood.textContent = featured.title;
+    fmSong.textContent = featured.songs?.[0]?.title || '—';
+    fmThumb.textContent = featured.title.split(' ')[0].slice(0,2).toUpperCase();
+  }
+  fmPlay.addEventListener('click', ()=>{
+    if(featured) goToPlaylist(featured.id);
+  });
+
+  /* ===== search filter ===== */
+  const searchInput = $('#search');
+  const clearBtn = $('#clear-search');
+  function filterMoods(q){
+    const term = (q||'').trim().toLowerCase();
+    if(!term) return MOODS;
+    return MOODS.filter(m => {
+      if(m.title.toLowerCase().includes(term)) return true;
+      if(m.desc && m.desc.toLowerCase().includes(term)) return true;
+      if(m.songs && m.songs.some(s => s.title.toLowerCase().includes(term))) return true;
+      return false;
     });
+  }
+  searchInput.addEventListener('input', (e)=>{
+    const filtered = filterMoods(e.target.value);
+    renderMoods(filtered);
+  });
+  clearBtn.addEventListener('click', ()=>{
+    searchInput.value = '';
+    renderMoods(MOODS);
+  });
 
-    /* ===== preview play (Phase 1 - open first song or alert) ===== */
-    function previewPlay(id){
-      const mood = MOODS.find(m => m.id === id);
-      if(!mood) return;
-      const first = mood.songs && mood.songs[0];
-      if(!first) return alert('No sample set for this mood yet.');
-      if(first.yt && first.yt !== '#') window.open(first.yt, '_blank');
-      else alert('Preview not available — add a sample YouTube link to the mood.songs[0].yt in code.');
-    }
+  //* ===== navigation to playlist page ===== */
+function goToPlaylist(id) {
+  window.location.href = `playlist.html?id=${id}`;
+}
 
-    /* ===== init ===== */
-    document.addEventListener('DOMContentLoaded', ()=>{
-      pickFeatured();
-      renderMoods(MOODS);
-      // header scroll effect
-      const hdr = document.getElementById('site-header');
-      window.addEventListener('scroll', ()=> hdr.classList.toggle('scrolled', window.scrollY > 36));
-    });
 
-    /* small keyboard accessibility: Enter on mood card opens playlist */
-    document.addEventListener('keydown', (e) => {
-      if(e.key === 'Escape') {
-        if(modal.classList.contains('active')) { modal.classList.remove('active'); modal.setAttribute('aria-hidden','true'); }
-      }
-    });
-  </script>
-  <script src="playerManager.js"></script>
+  /* ===== preview play (Phase 1 - open first song or alert) ===== */
+  function previewPlay(id){
+    const mood = MOODS.find(m => m.id === id);
+    if(!mood) return;
+    const first = mood.songs && mood.songs[0];
+    if(!first) return alert('No sample set for this playlist yet.');
+    if(first.yt && first.yt !== '#') window.open(first.yt, '_blank');
+    else alert('Preview not available — add a sample YouTube link in data.');
+  }
 
+  /* ===== init ===== */
+  document.addEventListener('DOMContentLoaded', ()=>{
+    pickFeatured();
+    renderMoods(MOODS);
+
+    // header scroll effect
+    const hdr = document.getElementById('site-header');
+    window.addEventListener('scroll', ()=> 
+      hdr.classList.toggle('scrolled', window.scrollY > 36)
+    );
+  });
+</script>
+<script src="playerManager.js"></script>
 </body>
 </html>
