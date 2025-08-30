@@ -212,6 +212,7 @@
       </div>
     </div>
   </footer>
+<script src="allsong.js"></script>
 <script src="playlist.js"></script>
 <script>
   /* ===== utilities ===== */
@@ -273,22 +274,41 @@
   }
 
   /* ===== featured mood: random on load ===== */
-  const fmMood = $('#fm-mood');
-  const fmSong = $('#fm-song');
-  const fmThumb = $('#fm-thumb');
-  const fmPlay = $('#fm-play');
-  let featured = null;
+const fmMood = document.getElementById('fm-mood');
+const fmSong = document.getElementById('fm-song');
+const fmThumb = document.getElementById('fm-thumb');
+const fmPlay = document.getElementById('fm-play');
+let featured = null;
 
-  function pickFeatured(){
-    const i = Math.floor(Math.random() * MOODS.length);
-    featured = MOODS[i];
-    fmMood.textContent = featured.title;
-    fmSong.textContent = featured.songs?.[0]?.title || '—';
-    fmThumb.textContent = featured.title.split(' ')[0].slice(0,2).toUpperCase();
-  }
-  fmPlay.addEventListener('click', ()=>{
-    if(featured) goToPlaylist(featured.id);
-  });
+function pickFeatured() {
+  // Pick a random mood
+  const i = Math.floor(Math.random() * MOODS.length);
+  featured = MOODS[i];
+
+  // Set mood title
+  fmMood.textContent = featured.title;
+
+  // Get first song title from AllSONGS using ID
+  if (featured.songs && featured.songs.length > 0) {
+  const randomIndex = Math.floor(Math.random() * featured.songs.length);
+  const songObj = AllSONGS.find(s => s.id === featured.songs[randomIndex]);
+  fmSong.textContent = songObj?.title || '—';
+} else {
+  fmSong.textContent = '—';
+}
+
+
+  // Set thumbnail (first 2 letters of first word)
+  fmThumb.textContent = featured.title.split(' ')[0].slice(0, 2).toUpperCase();
+}
+
+// Play button click
+fmPlay.addEventListener('click', () => {
+  if (featured) goToPlaylist(featured.id);
+});
+
+// Run on page load
+window.addEventListener('DOMContentLoaded', pickFeatured);
 
 // ===== Search Filter =====
 const searchInput = document.getElementById('search');
