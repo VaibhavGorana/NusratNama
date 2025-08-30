@@ -251,9 +251,6 @@
       <h1 id="hero-title">The Voice of the Divine</h1>
       <p> A soulful tribute to Ustad Nusrat Fateh Ali Khan <span class="urdu">— ساز کی سرحدیں نہیں</span></p>
 
-      <!-- hero audio element (local signature qawwali sample) -->
-      <audio id="hero-audio" src="songs/gorakh.mp3" preload="none"></audio>
-
       <div class="play-cta" id="hero-play" aria-label="Play signature qawwali" title="Play signature qawwali">
         <span class="triangle" aria-hidden="true"></span>
       </div>
@@ -495,11 +492,11 @@
     ];
     const el = document.getElementById('quote-strip');
     let i = 0;
-    setInterval(()=> {
+    setInterval ( ()=> {
       i = (i+1) % quotes.length;
       el.innerHTML = `"${quotes[i].en}" <span class="ur">"${quotes[i].ur}"</span>`;
     }, 4200);
-  })();
+})();
 
   </script>
   <script src="playerManager.js"></script>

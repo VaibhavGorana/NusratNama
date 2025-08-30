@@ -290,35 +290,46 @@
     if(featured) goToPlaylist(featured.id);
   });
 
-  // ===== Search Filter =====
+// ===== Search Filter =====
 const searchInput = document.getElementById('search');
 const clearBtn = document.getElementById('clear-search');
 
-// Function to filter moods based on search
 function filterMoods(q) {
   const term = (q || '').trim().toLowerCase();
   if (!term) return MOODS;
 
   return MOODS.filter(m => {
+    // 1. Check playlist title
     if (m.title && m.title.toLowerCase().includes(term)) return true;
+
+    // 2. Check playlist description
     if (m.desc && m.desc.toLowerCase().includes(term)) return true;
-    if (m.songs && Array.isArray(m.songs) && m.songs.some(s => s.title && s.title.toLowerCase().includes(term))) return true;
+
+    // 3. Check song titles from AllSONGS using song IDs
+    if (m.songs && Array.isArray(m.songs)) {
+      const hasMatch = m.songs.some(songId => {
+        const song = AllSONGS.find(s => s.id === songId);  // <-- mapping ID to title
+        return song && song.title && song.title.toLowerCase().includes(term);
+      });
+      if (hasMatch) return true;
+    }
+
     return false;
   });
 }
 
-
-// Listen for typing in search input
+// Input listener
 searchInput.addEventListener('input', (e) => {
   const filtered = filterMoods(e.target.value);
-  renderMoods(filtered); // Refresh UI with filtered moods
+  renderMoods(filtered); // Refresh the UI dynamically
 });
 
-// Clear search functionality
+// Clear search button
 clearBtn.addEventListener('click', () => {
   searchInput.value = '';
   renderMoods(MOODS);
 });
+
 
   //* ===== navigation to playlist page ===== */
 function goToPlaylist(id) {
